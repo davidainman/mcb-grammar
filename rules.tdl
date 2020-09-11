@@ -1,0 +1,74 @@
+;;; -*- Mode: TDL; Coding: utf-8 -*-
+nf-comp-head := nf-comp-head-phrase.
+
+;;; DAI 2017-10-03 removing for now, doesn't seem necessary and creates spurious ambiguity
+;; narrow-focused-phrase := narrow-focused-phrase.
+
+head-opt-subj := decl-head-opt-subj-phrase.
+
+head-opt-comp := basic-head-opt-comp-phrase.
+
+head-opt-poss := head-opt-poss-phrase.
+
+adj-head-scop := adj-head-scop-phrase.
+
+; Rule instances for head-modifier structures. Corresponding types
+; are defined in matrix.tdl.  The matrix customization script did
+; not need to add any further constraints, so no corresponding types
+; appear in matsigenka.tdl
+
+head-adj-scop := head-adj-scop-phrase.
+
+head-comp := head-comp-phrase.
+
+head-2nd-comp := head-2nd-comp-phrase.
+
+; removing for alleged basic VSO order
+;comp-head := comp-head-phrase.
+
+subj-head := subj-head-phrase.
+
+head-subj := head-subj-phrase.
+
+head-spec := head-spec-phrase.
+
+bare-np := bare-np-phrase.
+
+np1-top-coord := np1-top-coord-rule.
+
+np1-bottom-coord := np1-bottom-coord-rule.
+
+np2-top-coord := np2-top-coord-rule.
+
+np2-bottom-coord := np2-bottom-coord-rule.
+
+s2-top-coord := s2-top-coord-rule.
+
+s2-bottom-coord := s2-bottom-coord-rule.
+
+;;; REM Added this rule
+
+adj-head-int := adj-head-int-phrase.
+
+head-adj-int := head-adj-int-phrase.
+
+focus-verb-head-comp := focus-verb-head-comp-phrase.
+focus-noun-head-comp := focus-noun-head-comp-phrase.
+
+;;; DAI 2017-11-20 slash stuff
+
+;subj-head-slash := subj-head-slash-phrase.
+
+;head-subj-slash := head-subj-slash-phrase.
+
+;comp-head-slash := comp-head-slash-phrase.
+
+;head-comp-slash := head-comp-slash-phrase.
+
+;head-opt-subj-slash := head-opt-subj-slash-phrase.
+
+;head-opt-subj-slash := head-opt-comp-slash-phrase.
+
+left-dislocated-arg := left-dislocated-arg-phrase.
+
+;right-dislocated-arg := right-dislocated-arg-phrase.

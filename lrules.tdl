@@ -1,0 +1,30 @@
+;;; -*- Mode: TDL; Coding: utf-8 -*-
+subject-no-drop-lex := subject-no-drop-lex-rule.
+
+;;; DAI removing object-no-drop 2/5/14
+;;; DAI readding object-no-drop 2/6/14
+
+i-verb-realis-prefix-lex := i-verb-realis-prefix-lex-rule.
+
+a-verb-realis-prefix-lex := a-verb-realis-prefix-lex-rule.
+
+;;; DAI 2020-08-28 this is now redundant
+;no-object-clitic-lex := no-object-clitic-lex-rule.
+
+no-ni-clitic-lex := no-ni-clitic-lex-rule.
+
+infinitive-aspect-lex := infinitive-aspect-lex-rule.
+
+imperfective-suffix-lex := imperfective-lex-rule.
+
+slash-subj-lex := slash-subj-lex-rule.
+
+no-slash-subj-lex := no-slash-subj-lex-rule.
+
+slash-obj-lex := slash-obj-lex-rule.
+
+no-slash-obj-lex := no-slash-obj-lex-rule.
+
+;no-slash-subj-lex := no-slash-subj-lex-rule.
+
+;no-slash-subj-no-slashes-lex := no-slashes-lex-rule.

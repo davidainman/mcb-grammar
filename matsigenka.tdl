@@ -1,0 +1,2036 @@
+;;; -*- Mode: TDL; Coding: utf-8 -*-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Grammar of Matsigenka
+;;; created at:
+;;;     Mon Feb 03 00:07:24 UTC 2014
+;;; based on Matrix customization system version of:
+;;;     Fri Jan 31 10:06:37 UTC 2014
+;;;
+;;; This is Version 1
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Type assigning empty mod list. Added to basic types for nouns, verbs and determiners.
+
+non-mod-lex-item := lex-item &
+  [ SYNSEM.LOCAL.CAT.HEAD.MOD < > ].
+
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Matrix Type Addenda
+;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; DAI 2017-10-31 defining copula complement lists, parallel to olist
+
+cclist := list.
+
+cccons := cclist & cons &
+  [ FIRST.COP-COMP +,
+    REST  cclist ].
+
+ccnull := cclist & null.
+
+;;; DAI 2017-10-31 adding COP-COMP since copulas have special syntactic rules (comp-first)
+lex-or-phrase-synsem :+ [ INFOSTR-FLAG luk,
+						  COP-COMP luk ].
+
+;;; DAI 2017-10-27 adding NEG-SAT to force negative n-copula to be negated
+;;; DAI 2017-09-29 removing SUBJ-OPT, SUBJ-TOPIC, OBJ-TOPIC because I don't think
+;;; this is useful in mcb (but necessary for cox)
+head :+ [ AUX bool,
+          FORM form,
+          QUOTATIVE bool,
+          NEGATED bool,
+          NEG-SAT luk,
+          N-COP luk,
+          NTI-COP luk ].
+
+;; not for mcb decl-head-subj-phrase :+ [ SYNSEM.INFOSTR-FLAG -, NON-HEAD-DTR.SYNSEM.INFOSTR-FLAG - ].
+
+basic-head-1st-comp-phrase :+ [ SYNSEM.INFOSTR-FLAG -, NON-HEAD-DTR.SYNSEM.INFOSTR-FLAG - ].
+
+basic-head-2nd-comp-phrase :+ [ SYNSEM.INFOSTR-FLAG -, NON-HEAD-DTR.SYNSEM.INFOSTR-FLAG - ].
+
+;; Requiring comps < > to cut down on spurious ambiguity in the tree
+basic-head-opt-subj-phrase :+ [ SYNSEM.INFOSTR-FLAG -,
+                                HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].
+
+;;; DAI 2020-09-11 to cut down on ambiguity and because there is a head-2nd-comp-phrase, restricting this
+;;; to apply only to COMPS lists of length one.
+basic-head-opt-comp-phrase :+ [ SYNSEM.INFOSTR-FLAG -,
+                                HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS.REST null ].
+
+basic-head-mod-phrase-simple :+ [ SYNSEM [ INFOSTR-FLAG -,
+                                           LOCAL.CAT.MC #mc ],
+                                  NON-HEAD-DTR.SYNSEM.LOCAL.CAT.MC #mc ].
+
+basic-head-spec-phrase :+ [ SYNSEM.INFOSTR-FLAG - ].
+
+basic-bare-np-phrase :+ [ SYNSEM.INFOSTR-FLAG -, HEAD-DTR.SYNSEM.INFOSTR-FLAG - ].
+
+head-opt-poss-phrase := head-valence-phrase & head-only &
+                        head-compositional &
+  [ INFLECTED #infl,
+    SYNSEM canonical-synsem &
+        [ LOCAL.CAT [ VAL [ SUBJ #subj,
+          COMPS #comps,
+          SPR #spr,
+          SPEC #spec ],
+          MC #mc,
+          POSTHEAD #ph ],
+    MODIFIED #mod ],
+    HEAD-DTR [ INFLECTED #infl & infl-satisfied,
+         SYNSEM [ LOCAL [ CAT [ VAL [ SUBJ #subj,
+              COMPS < unexpressed &
+                [ OPT +,
+                  OPT-CS #def,
+                  LOCAL.CONT.HOOK [ INDEX #index & [ COG-ST #def ],
+                  ICONS-KEY #ikey,
+                  CLAUSE-KEY #ckey ] ] . #comps >,
+              SPR #spr,
+              SPEC #spec ],
+              MC #mc,
+              POSTHEAD #ph ],
+        CONT.HOOK.INDEX ref-ind ],
+      MODIFIED #mod ] ],
+    C-CONT [ RELS <! !>,
+       HCONS <! !>,
+       ICONS.LIST.FIRST #ikey & non-focus & [ TARGET #index,
+                CLAUSE #ckey ] ] ].
+
+;; DAI 2017-09-29 removing as this is for the one NP restriction in cox
+;; basic-head-subj-phrase :+ [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.OPT - ].
+
+;;; DAI 2017-09-29 removing OPT - as it is for one NP restriction
+basic-head-comp-phrase :+ [ SYNSEM.LOCAL.CAT.MC #mc,
+    HEAD-DTR.SYNSEM.LOCAL.CAT [ MC #mc ] ].
+
+; This grammar includes head-modifier rules.  To keep
+; out extraneous parses, constrain the value of MOD on
+; various subtypes of head.  This may need to be loosened later.
+; This constraint says that only adverbs, adjectives,
+; and adpositions can be modifiers.
+
++nvcdmo :+ [ MOD < > ].
+
+;;; DAI 2017-11-21 adding SUBJ-SLASH-FLAG and COMP-SLASH-FLAG
+inflected :+ [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG luk,
+    A-VERB-IRREALIS-SUFFIX-FLAG luk,
+    A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG luk,
+    I-VERB-IRREALIS-SUFFIX-FLAG luk,
+    VERB-FLAG luk,
+    I-VERB-IRREALIS-PREFIX-FLAG luk,
+    A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG luk,
+    SUBJECT-FLAG luk,
+    OBJECT-FLAG luk,
+    S-OR-O-CLITIC luk,
+    ASPECT-FLAG luk,
+    A-VERB-IRREALIS-PREFIX-FLAG luk,
+    I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG luk,
+    TRANSITIVE-VERB-FLAG luk,
+    NI-FLAG luk,
+    SUBJ-SLASH-FLAG luk,
+    COMP-SLASH-FLAG luk ].
+
+infl-satisfied :+ [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG na-or-+,
+    A-VERB-IRREALIS-SUFFIX-FLAG na-or-+,
+    A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG na-or-+,
+    I-VERB-IRREALIS-SUFFIX-FLAG na-or-+,
+    VERB-FLAG na-or-+,
+    I-VERB-IRREALIS-PREFIX-FLAG na-or-+,
+    A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG na-or-+,
+    SUBJECT-FLAG na-or-+,
+    OBJECT-FLAG na-or-+,
+    S-OR-O-CLITIC na-or-+,
+    ASPECT-FLAG na-or-+,
+    A-VERB-IRREALIS-PREFIX-FLAG na-or-+,
+    I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG na-or-+,
+    TRANSITIVE-VERB-FLAG na-or-+,
+    NI-FLAG na-or-+,
+    SUBJ-SLASH-FLAG na-or-+,
+    COMP-SLASH-FLAG na-or-+ ].
+
+png :+ [ PERNUM pernum,
+    GEND gender ].
+
+
+;;;;;;;;;;;;;;
+;;; Features
+;;;;;;;;;;;;;;
+
+;;; Pernum
+
+pernum := *top*.
+SG := pernum.
+PL := pernum.
+DSTR := pernum.
+1st := pernum.
+2nd := pernum.
+3rd := pernum.
+1SG := SG & 1SG+1PL_excl+1DSTR.
+2SG := 2nd & SG.
+3SG := 3rd & SG.
+1PL := 1st & PL.
+1PL_incl := 1PL.
+1PL_excl := 1PL & 1SG+1PL_excl+1DSTR.
+2PL := 2nd & PL.
+3PL := 3rd & PL.
+1DSTR := DSTR & 1SG+1PL_excl+1DSTR.
+2DSTR := 2nd & DSTR.
+3DSTR := 3rd & DSTR.
+1SG+1PL_excl+1DSTR := 1st.
+
+;;; Gender
+
+gender := *top*.
+nm-animate := non-masc & non-nm-non-animate.
+nm-non-animate := non-masc.
+non-masc := gender.
+non-nm-non-animate := gender.
+masc := non-nm-non-animate.
+
+;;; DAI 2/20/14 Hey look it's finiteness
+
+form := *top*.
+nonfinite := form.
+finite := form.
+irrealis-form := nonfinite.
+realis-form := nonfinite.
+
+;;; Aspect
+
+perfective := aspect.
+imperfective := aspect.
+
+;;; Mood
+
+Realis := mood.
+Irrealis := mood.
+
+;;;;;;;;;;;;;;;;;;;
+;;; Lexical Types
+;;;;;;;;;;;;;;;;;;;
+
+;;; Nouns
+
+noun-lex := basic-noun-lex & basic-one-arg & no-hcons-lex-item & non-mod-lex-item &
+  [ SYNSEM.LOCAL.CAT.VAL [ SPR < #spr &
+                                 [ LOCAL.CAT.HEAD det ] >,
+                           COMPS < >,
+                           SUBJ < >,
+                           SPEC < > ],
+    ARG-ST < #spr > ].
+
+no-spr-noun-lex := noun-lex &
+  [ SYNSEM.LOCAL.CAT.VAL.SPR < [ OPT + ] > ].
+
+; Nouns which cannot take specifiers mark their SPR requirement
+; as OPT +.  Making the non-head daughter OPT - in this rule
+; keeps such nouns out.
+; 
+; Rules for building NPs.  Note that the Matrix uses SPR for
+; the specifier of nouns and SUBJ for the subject (specifier) of verbs.
+
+;;; DAI 2020-09-11 forcing COMPS empty on head dtr
+head-spec-phrase := basic-head-spec-phrase & head-final &
+  [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < >,
+    NON-HEAD-DTR.SYNSEM.OPT - ].
+
+common-noun-noun-lex := noun-lex & possession-rule-dtr &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 3rd ].
+
+1st-EXCL-PRO-noun-lex := no-spr-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 1SG+1PL_excl+1DSTR ].
+
+2nd-PRO-noun-lex := no-spr-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 2nd ].
+
+3rd-PRO-M-noun-lex := no-spr-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+                                       GEND masc ] ].
+
+3rd-PRO-NM-noun-lex := no-spr-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+                                       GEND NON-masc ] ].
+
+IS-PRO-noun-lex := no-spr-noun-lex &
+  [ SYNSEM [ LOCAL [ CONT [ HOOK [ ICONS-KEY focus-or-topic,
+                                   INDEX [ COG-ST in-foc,
+                                           SPECI + ]]]]]].
+
+FIRST-PRO-noun-lex := no-spr-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX [ COG-ST in-foc,
+                                   SPECI + ]].
+
+RECENT-PRO-noun-lex := no-spr-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX [ COG-ST in-foc,
+                                   SPECI + ]].
+
+1st-INCL-PRO-noun-lex := no-spr-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 1PL_incl ].
+
+1st-RECENT-PRO-noun-lex := RECENT-PRO-noun-lex & 1st-PRO-noun-lex.
+
+2nd-RECENT-PRO-noun-lex := 2nd-PRO-noun-lex & RECENT-PRO-noun-lex.
+
+3rd-M-RECENT-PRO-noun-lex := 3rd-PRO-M-noun-lex & RECENT-PRO-noun-lex.
+
+3rd-NM-RECENT-PRO-noun-lex := 3rd-PRO-NM-noun-lex & RECENT-PRO-noun-lex.
+
+1st-FIRST-PRO-noun-lex := FIRST-PRO-noun-lex & 1st-PRO-noun-lex.
+
+2nd-FIRST-PRO-noun-lex := 2nd-PRO-noun-lex & FIRST-PRO-noun-lex.
+
+3rd-M-FIRST-PRO-noun-lex := 3rd-PRO-M-noun-lex & FIRST-PRO-noun-lex.
+
+3rd-NM-FIRST-PRO-noun-lex := 3rd-PRO-NM-noun-lex & FIRST-PRO-noun-lex.
+
+masculine-noun-noun-lex := noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.GEND masc ].
+
+nm-noun-noun-lex := noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.GEND NON-masc ].
+
+nm-animate-noun-noun-lex := noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.GEND nm-animate ].
+
+nm-inanimate-noun-noun-lex := noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.GEND nm-non-animate ].
+
+common-noun-m-noun-lex := common-noun-noun-lex & masculine-noun-noun-lex.
+
+common-noun-nm-anim-noun-lex := common-noun-noun-lex & nm-animate-noun-noun-lex.
+
+common-noun-nm-inan-noun-lex := common-noun-noun-lex & nm-inanimate-noun-noun-lex.
+
+common-noun-anim-noun-lex := common-noun-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.GEND non-nm-non-animate ].
+
+1st-PRO-noun-lex := no-spr-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 1st ].
+
+proper-noun-noun-lex := noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 3SG ].
+
+proper-noun-m-noun-lex := masculine-noun-noun-lex & proper-noun-noun-lex.
+
+1st-SG-IS-PRO-noun-lex := IS-PRO-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 1SG ].
+
+1st-EXCL-IS-PRO-noun-lex := IS-PRO-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 1PL_excl ].
+
+2nd-SG-IS-PRO-noun-lex := IS-PRO-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 2SG ].
+
+2nd-PL-IS-PRO-noun-lex := IS-PRO-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 2PL ].
+
+3rd-M-SG-IS-PRO-noun-lex := IS-PRO-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3SG,
+                                       GEND masc ] ].
+
+3rd-M-PL-IS-PRO-noun-lex := IS-PRO-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3PL,
+                                       GEND masc ] ].
+
+3rd-NM-SG-IS-PRO-noun-lex := IS-PRO-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3SG,
+                                       GEND NON-masc ] ].
+
+3rd-NM-PL-IS-PRO-noun-lex := IS-PRO-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3PL,
+                                       GEND NON-masc ] ].
+
+1st-INCL-IS-PRO-noun-lex := IS-PRO-noun-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 1PL_incl ].
+
+proper-noun-nm-noun-lex := nm-noun-noun-lex & proper-noun-noun-lex.
+
+;;; Verbs
+
+; verb-lex is HC-LIGHT - to allow us to pick out
+; 
+;   lexical Vs for V-level attachment of negative adverbs.
+
+;;; REM 2/9/14 verb-lex-supertype
+;;; DAI 2/11/14 setting OBJECT-FLAG - since copula must have adj
+;;; DAI 2017-11-21 adding SUBJ-SLASH-FLAG
+verb-lex-supertype := non-mod-lex-item & Aspect-rule-dtr & aspect-directional-rule-dtr & a-verb-reality-prefix-rule-dtr & a-verb-reality-suffix-or-i-verb-reality-suffix-rule-dtr & i-verb-reality-prefix-rule-dtr & subject-rule-dtr &
+  [ SYNSEM.LOCAL.CAT.HEAD verb,
+    INFLECTED [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG -,
+                A-VERB-IRREALIS-SUFFIX-FLAG na-or--,
+                SUBJECT-FLAG -,
+                SUBJ-SLASH-FLAG -,
+                VERB-FLAG +,
+                I-VERB-IRREALIS-SUFFIX-FLAG na-or--,
+                A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG -,
+                ASPECT-FLAG -,
+                OBJECT-FLAG -,
+                SUBJ-SLASH-FLAG - ]].
+
+;;; DAI 2/20/14
+;;; why is verb-lex all of the morph rule dtrs? restricting
+
+verb-lex := non-mod-lex-item & argument-number-rule-dtr & Aspect-rule-dtr & aspect-directional-rule-dtr & a-verb-reality-prefix-rule-dtr & a-verb-reality-suffix-or-i-verb-reality-suffix-rule-dtr & direct-ditransitive-object-rule-dtr & i-verb-reality-prefix-rule-dtr & object-rule-dtr & subject-rule-dtr &
+   [ SYNSEM.LOCAL.CAT.HEAD verb ].
+
+;;; DAI 2/20/14 adding main-verb-lex and aux-verb-lex to account
+;;; for te/ha -- everything is now inheriting from main-verb-lex
+;;; instead of verb-lex. verb-lex is now mostly a placeholder
+
+main-verb-lex := verb-lex & basic-verb-lex &
+  [ SYNSEM.LOCAL [ CAT [ HEAD.AUX -,
+                         VAL [ SPR < >,
+                               SPEC < >,
+                               SUBJ < #subj > ],
+                         HC-LIGHT -,
+                         HEAD [ QUOTATIVE - ]],
+                   CONT.HOOK.XARG #xarg ],
+   ARG-ST.FIRST #subj &
+     [ LOCAL [ CAT.VAL [ SPR < >,
+                         COMPS < > ],
+               CONT.HOOK.INDEX #xarg ] ],
+   INFLECTED [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG -,
+                A-VERB-IRREALIS-SUFFIX-FLAG na-or--,
+                SUBJECT-FLAG -,
+                VERB-FLAG +,
+                I-VERB-IRREALIS-SUFFIX-FLAG na-or--,
+                A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG -,
+                ASPECT-FLAG - ] ].
+
+aux-lex := verb-lex &
+  [ SYNSEM.LOCAL.CAT [ HEAD [ AUX + ],
+                       VAL.COMPS.FIRST [ OPT - ] ],
+    INFLECTED infl-satisfied ].
+
+;;; rem copula-verb-lex 2/9/14
+;;; DAI 2/11/14 copula must have an overt object
+;;; and I-Verb Inflection
+;;; DAI 2017-09-29 removing subj-topic & obj-topic
+;;; DAI 2017-10-27 Adding MOOD realis, this version cannot take irrealis marking & is realis!
+n-copula-verb-lex := verb-lex-supertype & trans-first-arg-raising-lex-item-2 &
+  [ SYNSEM.LOCAL [ CAT [ VAL [ SUBJ < #subj >,
+                               COMPS < #comps >,
+                               SPR < >,
+                               SPEC < > ],
+                         HEAD [ N-COP +,
+                                MOD < > ]],
+                   CONT.HOOK  [ XARG #xarg,
+        						INDEX.E.MOOD realis ]],
+    INFLECTED [ I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG +,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG na-or-- ],
+    ARG-ST < #subj &
+             [ LOCAL [ CONT.HOOK.INDEX #xarg,
+                       CAT [ VAL [ SPR < >,
+                                   COMPS < > ],
+                             HEAD noun ] ] ],
+             #comps &
+             [ COP-COMP +,
+               LOCAL.CAT [ VAL [ COMPS < > ],
+                           HEAD +jp ] ] > ].
+
+;;; DAI 2017-10-27 Adding irrealis-form, this version must take irrealis marking & be negated.
+n-copula-verb-lex-neg := verb-lex-supertype & transitive-lex-item
+  [ SYNSEM.LOCAL [ CAT [ VAL [ SUBJ < #subj >,
+                               COMPS < #comps >,
+                               SPR < >,
+                               SPEC < > ],
+                         HEAD [ NEG-SAT -,
+                                MOD < >,
+                                FORM irrealis-form ]],
+                   CONT.HOOK  [ XARG #xarg ]],
+    INFLECTED [ I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG +,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG na-or-- ],
+    ARG-ST < #subj &
+             [ LOCAL [ CONT.HOOK.INDEX #xarg,
+                       CAT [ VAL [ SPR < >,
+                                   COMPS < > ],
+                             HEAD noun ] ] ],
+             #comps &
+             [ LOCAL.CAT [ VAL [ SPR < >,
+                                 COMPS < > ],
+                           HEAD noun ] ] > ].
+
+intransitive-verb-lex := main-verb-lex & intransitive-lex-item &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS < >,
+    ARG-ST.FIRST.LOCAL.CAT.HEAD noun,
+    INFLECTED [ TRANSITIVE-VERB-FLAG na-or--,
+                OBJECT-FLAG na,
+                SUBJ-SLASH-FLAG -,
+                COMP-SLASH-FLAG na,
+                NI-FLAG na ]].
+
+transitive-verb-lex := main-verb-lex & transitive-lex-item &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,
+    ARG-ST < [ LOCAL.CAT.HEAD noun ],
+             #comps &
+             [ LOCAL.CAT [ VAL [ SPR < >,
+                                 COMPS < > ],
+                           HEAD noun ] ] >,
+    INFLECTED [ TRANSITIVE-VERB-FLAG +,
+                SUBJ-SLASH-FLAG -,
+                COMP-SLASH-FLAG -,
+                S-OR-O-CLITIC -,
+                OBJECT-FLAG -,
+                NI-FLAG na ] ].
+
+ditransitive-verb-lex := main-verb-lex & ditransitive-lex-item &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS < #first, #second >,
+    ARG-ST < [ LOCAL.CAT.HEAD noun ],
+             #first & 
+             [ LOCAL.CAT [ VAL [ SPR < >,
+                                 COMPS < > ],
+                           HEAD noun ]],
+             #second &
+             [ LOCAL.CAT [ VAL [ SPR < >,
+                                 COMPS < > ],
+                           HEAD noun ]] >,
+    INFLECTED [ S-OR-O-CLITIC -,
+                OBJECT-FLAG -,
+                NI-FLAG -,
+                SUBJ-SLASH-FLAG -,
+                COMP-SLASH-FLAG - ]].
+
+;;; DAI 3/5/14 type for stative verbs
+stative-verb-lex := intransitive-verb-lex.
+
+;;; REM 2/9/14 Nti copula verb lex
+;;; DAI 2/20/14 adding AUX -
+nti-copula-verb-lex := basic-verb-lex & non-mod-lex-item & transitive-lex-item &
+  [ SYNSEM [ LOCAL [ CAT [ VAL [ COMPS < #comps & [ OPT - ] >,
+                                 SPR < >,
+                                 SPEC < >,
+                                 SUBJ < #subj > ],
+                           HC-LIGHT -,
+                           HEAD [ N-COP -,
+                                  NTI-COP +,
+                                  AUX -,
+                                  QUOTATIVE - ]],
+                     CONT.HOOK.XARG #xarg ],
+             LKEYS.KEYREL.PRED "_be_v_id_rel" ],
+    ARG-ST < #subj & 
+               [ LOCAL [ CAT [ HEAD noun,
+                               VAL [ SPR < >,
+                                     COMPS < > ]],
+                         CONT.HOOK.INDEX #xarg ]],
+             #comps &
+             [ LOCAL.CAT [ VAL [ SPR < >,
+                                 COMPS < > ],
+                           HEAD noun ] ] >,
+    INFLECTED infl-satisfied ].
+
+;;; DAI 2/8/14 adding clausal verbs
+clausal-verb-lex := main-verb-lex & clausal-second-arg-trans-lex-item &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS < #clause &
+                                 [ LOCAL [ CAT [ HEAD verb,
+                                                 VAL [ SUBJ < >,
+                                                       SPR < >,
+                                                       COMPS < > ] ],
+                                           CONT.HOOK [ INDEX.SF prop-or-ques ] ] ] >,
+    ARG-ST.REST.FIRST #clause,
+    INFLECTED [ OBJECT-FLAG na,
+                TRANSITIVE-VERB-FLAG +,
+                SUBJ-SLASH-FLAG -,
+                COMP-SLASH-FLAG na,
+                NI-FLAG + ] ].
+
+clausal-reality-matching-verb-lex := clausal-verb-lex &
+  [ SYNSEM.LOCAL [ CONT.HOOK.INDEX.E.MOOD #mood,
+                   CAT.VAL.COMPS < [ LOCAL.CONT.HOOK.INDEX.E.MOOD #mood ] > ] ].
+
+clausal-irrealis-verb-lex := clausal-verb-lex &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CONT.HOOK.INDEX.E.MOOD irrealis ] > ].
+
+clausal-reality-matching-prop-verb-lex := clausal-reality-matching-verb-lex &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.SF prop ].
+
+i-intransitive-verb-verb-lex := intransitive-verb-lex &
+  [ INFLECTED [ I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG +,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG na-or-- ] ].
+
+i-transitive-verb-verb-lex := transitive-verb-lex &
+  [ INFLECTED [ I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG +,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG na-or-- ] ].
+
+;;; DAI 3/5/14 +stative verbs
+
+i-stative-verb-lex := stative-verb-lex &
+  [ INFLECTED [ I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG +,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG na-or-- ] ].
+
+i-ditransitive-verb-lex := ditransitive-verb-lex &
+  [ INFLECTED [ I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG +,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG na-or-- ]].
+
+i-clausal-matching-verb-verb-lex := clausal-reality-matching-verb-lex &
+  [ INFLECTED [ I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG +,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG na-or-- ] ].
+
+i-clausal-irrealis-verb-verb-lex := clausal-irrealis-verb-lex &
+  [ INFLECTED [ I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG +,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG na-or-- ] ].
+
+i-clausal-matching-prop-verb-lex := clausal-reality-matching-prop-verb-lex &
+  [ INFLECTED [ I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG +,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG na-or-- ] ].
+
+a-intransitive-verb-verb-lex := intransitive-verb-lex &
+  [ INFLECTED [ A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG +,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG na-or-- ] ].
+
+;;; DAI 3/5/14 stative verb
+
+a-stative-verb-lex := stative-verb-lex &
+  [ INFLECTED [ A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG +,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG na-or-- ] ].
+
+a-transitive-verb-verb-lex := transitive-verb-lex &
+  [ INFLECTED [ A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG +,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG na-or-- ] ].
+
+a-ditransitive-verb-lex := ditransitive-verb-lex &
+  [ INFLECTED [ A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG +,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG na-or-- ] ].
+
+a-clausal-matching-verb-verb-lex := clausal-reality-matching-verb-lex & 
+  [ INFLECTED [ A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG +,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG na-or-- ] ].
+
+a-clausal-irrealis-verb-verb-lex := clausal-irrealis-verb-lex &
+  [ INFLECTED [ A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG +,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG na-or-- ] ].
+
+;;; DAI 2/24/14
+;;; verb-type for ka
+clausal-subj-only-verb-lex := verb-lex & basic-verb-lex & clausal-second-arg-trans-lex-item &
+  [ SYNSEM.LOCAL [ CAT [ HEAD [ AUX -,
+                                QUOTATIVE + ],
+                         VAL [ SPR < >,
+                               SPEC < >,
+                               SUBJ < #subj >,
+                               COMPS < #clause &
+                                [ LOCAL [ CAT [ HEAD verb,
+                                                VAL [ SUBJ < >,
+                                                      SPR < >,
+                                                      COMPS < > ] ],
+                                          CONT.HOOK.INDEX.SF prop-or-ques ] ] >  ],
+                         HC-LIGHT - ],
+                   CONT.HOOK.XARG #xarg ],
+   ARG-ST [ FIRST #subj &
+               [ LOCAL [ CAT.VAL [ SPR < >,
+                                   COMPS < > ],
+                         CONT.HOOK.INDEX #xarg ] ],
+            REST.FIRST #clause ],
+   INFLECTED [  A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG na,
+                A-VERB-IRREALIS-SUFFIX-FLAG na,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG na,
+                VERB-FLAG +,
+                I-VERB-IRREALIS-SUFFIX-FLAG na,
+                I-VERB-IRREALIS-PREFIX-FLAG na,
+                A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG na,
+                OBJECT-FLAG na,
+                ASPECT-FLAG na,
+                A-VERB-IRREALIS-PREFIX-FLAG na,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG na,
+                NI-FLAG na,
+                TRANSITIVE-VERB-FLAG +,
+                S-OR-O-CLITIC -,
+                SUBJECT-FLAG - ] ].
+
+;;; DAI 2/20/14
+;;; Adding AUX stuff
+
+s-comp-aux := aux-lex & basic-one-arg & 
+  [ SYNSEM.LOCAL.CAT.VAL [ SPR < >,
+                           SPEC < >,
+                           SUBJ < >,
+                           COMPS < #comps > ],
+    ARG-ST < #comps &
+               [ LOCAL.CAT [ VAL [ SUBJ < >,
+                                   COMPS < >,
+                                   SPR < >,
+                                   SPEC < > ],
+                             HEAD verb &
+                                 [ AUX - ] ] ] > ].
+
+
+s-comp-aux-with-pred := s-comp-aux & single-rel-lex-item & norm-ltop-lex-item & 
+  [ SYNSEM [ LOCAL.CONT.HCONS <! qeq & [ HARG #harg,
+                                         LARG #larg ] !>,
+             LKEYS.KEYREL event-relation & [ ARG1 #harg ] ],
+    ARG-ST < [ LOCAL.CONT.HOOK.LTOP #larg ] > ].
+
+;;; DAI 2017-11-19 adding NTI-COP - (luk-valued), to keep NTI from being the complement of the auxiliaries
+neg-aux-lex := s-comp-aux-with-pred &
+  [ SYNSEM.LOCAL [ CAT [ VAL.COMPS.FIRST.LOCAL [ CAT.HEAD [ FORM nonfinite,
+                                                            NTI-COP -, 
+                                                            NEG-SAT -,
+                                                            NEGATED - ],
+                                                 CONT.HOOK.INDEX #index ],
+                         HEAD.NEGATED + ],
+                   CONT.HOOK.INDEX #index ] ].
+
+neg-notionally-realis-aux-lex := neg-aux-lex &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL [ CONT.HOOK.INDEX.E.MOOD realis,
+                                             CAT.HEAD.FORM irrealis-form ] ].
+
+neg-notionally-irrealis-aux-lex := neg-aux-lex &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL [ CONT.HOOK.INDEX.E.MOOD irrealis,
+                                             CAT.HEAD.FORM realis-form ] ].
+
+;;; Others
+
+;;; Adjectives
+;;; REM Added all stuff in this section
+
+adjective-lex := basic-adjective-lex & intersective-mod-lex & norm-hook-lex-item &
+  [ SYNSEM [ LOCAL [ CAT [ HEAD.MOD < [ LOCAL.CAT [ HEAD noun,
+                                                    VAL.SPR cons ]]>,
+                           VAL [ SPR < >,
+                                 SUBJ < >,
+
+                                 COMPS < >,
+                                 SPEC < > ],
+                           POSTHEAD - ],
+                     CONT.HOOK.XARG #xarg ],
+             LKEYS.KEYREL.ARG1 #xarg ]].
+
+adjective-inan-lex := adjective-lex &
+  [ SYNSEM [ LOCAL [ CAT [ HEAD.MOD < [ LOCAL.CONT.HOOK.INDEX.PNG.GEND nm-non-animate ]> ]]]].
+
+adjective-anim-lex := adjective-lex &
+  [ SYNSEM [ LOCAL [ CAT [ HEAD.MOD < [ LOCAL.CONT.HOOK.INDEX.PNG.GEND non-nm-non-animate ]> ]]]].
+
+adjective-masc-lex := adjective-lex & 
+  [ SYNSEM [ LOCAL [ CAT [ HEAD.MOD < [ LOCAL.CONT.HOOK.INDEX.PNG.GEND masc ]> ]]]].
+
+adjective-nonmasc-lex := adjective-lex &
+  [ SYNSEM [ LOCAL [ CAT [ HEAD.MOD < [ LOCAL.CONT.HOOK.INDEX.PNG.GEND NON-masc ]> ]]]].
+
+adjective-anim-nonmasc-lex := adjective-lex &
+  [ SYNSEM [ LOCAL [ CAT [ HEAD.MOD < [ LOCAL.CONT.HOOK.INDEX.PNG.GEND nm-animate ]> ]]]].
+
+;;; Adverbs
+;;; REM Also this section
+
+adverb-lex := basic-adverb-lex & intersective-mod-lex &
+  [ SYNSEM [ LOCAL [ CAT [ HEAD.MOD < [ LOCAL.CAT.HEAD verb ]>,
+			   VAL [ SPR < >,
+				 SUBJ < >,
+				 COMPS < >,
+				 SPEC < > ]]]]].
+
+;;; DAI 2/5/14
+;;; PREDSORT for Determiners
+
+demonstrative_a_rel := predsort.
+proximal+dem_a_rel := demonstrative_a_rel. ; close to speaker
+hearer+dem_a_rel := proximal+dem_a_rel.    ; close to speaker+hearer
+distal+dem_a_rel := demonstrative_a_rel.   ; far from speaker
+
+;;; Determiners
+;;; SPEC is non-empty, and already specified by basic-determiner-lex.
+
+;;; DAI 2/5/14 adding determiner-lex-supertype
+
+determiner-lex-supertype := norm-hook-lex-item & basic-zero-arg &
+  [ SYNSEM [ LOCAL [ CAT [ HEAD det,
+			   VAL [ SPEC.FIRST.LOCAL.CONT.HOOK [ INDEX #ind,
+				  			     LTOP #larg ],
+                                SPR < >,
+                                SUBJ < >,
+                                COMPS < > ] ],
+		     CONT [ HCONS <! qeq &
+				 [ HARG #harg,
+				   LARG #larg ] !>,
+                            RELS <! [ PRED "exist_q_rel" ], #lkalt !> ] ],
+	     LKEYS [ KEYREL quant-relation &
+		     [ ARG0 #ind,
+		       RSTR #harg ],
+                       ALTKEYREL arg1-ev-relation & #lkalt & 
+                          [ LBL #larg,
+                            ARG1 #ind ] ] ] ].
+
+determiner-lex := basic-determiner-lex & basic-zero-arg & non-mod-lex-item &
+  [ SYNSEM.LOCAL.CAT.VAL [ SPR < >,
+                           COMPS < >,
+                           SUBJ < > ] ].
+
+cog-st-activated := no-icons-lex-item &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.COG-ST activated ].
+
+cog-st-uniq-id := no-icons-lex-item &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.COG-ST uniq+fam ].
+
+cog-st-familiar := no-icons-lex-item &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.COG-ST familiar ].
+
+cog-st-fam-or-more := no-icons-lex-item &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.COG-ST fam-or-more ].
+
+;;; DAI 2/5/14 inheriting from supertype instead of determiner-lex-supertype
+
+masculine-determiner-lex := determiner-lex-supertype &
+  [ SYNSEM.LOCAL.CAT.VAL.SPEC.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.GEND masc ].
+
+nonmasculine-determiner-lex := determiner-lex-supertype &
+  [ SYNSEM.LOCAL.CAT.VAL.SPEC.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.GEND NON-masc ].
+
+speaker-addressee-prox-det-M-determiner-lex := masculine-determiner-lex & cog-st-activated.
+
+speaker-adressee-prox-det-NM-determiner-lex := nonmasculine-determiner-lex & cog-st-activated.
+
+speaker-prox-det-M-determiner-lex := masculine-determiner-lex & cog-st-uniq-id.
+
+speaker-prox-det-NM-determiner-lex := nonmasculine-determiner-lex & cog-st-uniq-id.
+
+speaker-dist-det-M-determiner-lex := masculine-determiner-lex & cog-st-familiar.
+
+speaker-dist-det-NM-determiner-lex := nonmasculine-determiner-lex & cog-st-familiar.
+
+; Type for negative adverbs.
+; 
+; This adverb should go through a specialized phrase structure rule
+;        included with this grammar.
+
+
+;;; DAI 2017-10-17 removing VAL SUBJ null, COMPS null (I need to allow subj to attach outside)
+;;; DAI 2017-11-19 actually these need to be olists: optional items may attach outside but otherwise must be satisfied.
+neg-adv-lex := basic-scopal-adverb-lex &
+  [ SYNSEM.LOCAL.CAT [ VAL [ SPR < >,
+                             COMPS < >,
+                             SUBJ < > ],
+                       POSTHEAD -,
+                       HEAD.MOD < [ LOCAL.CAT [ HEAD verb &
+                                                [ NEGATED + ],
+                                                VAL [ COMPS olist,
+                                                      SUBJ  olist ] ] ] > ] ].
+
+neg-irrealis-lex := neg-adv-lex &
+  [ SYNSEM.LOCAL.CAT.HEAD.MOD < [ LOCAL.CONT.HOOK.INDEX.E [ MOOD irrealis,
+                                                            ASPECT imperfective ] ] > ].
+
+;;;;;;;;;;;;;;;;;;;
+;;; Lexical Rules
+;;;;;;;;;;;;;;;;;;;
+
+;;; Intermediate rule types
+
+argument-number-rule-dtr := word-or-lexrule.
+object-rule-dtr := word-or-lexrule.
+i-verb-reality-prefix-rule-dtr := word-or-lexrule.
+a-verb-reality-suffix-or-i-verb-reality-suffix-rule-dtr := word-or-lexrule.
+subject-rule-dtr := word-or-lexrule.
+a-verb-reality-prefix-rule-dtr := word-or-lexrule.
+Aspect-rule-dtr := word-or-lexrule.
+aspect-directional-rule-dtr := word-or-lexrule.
+direct-ditransitive-object-rule-dtr := word-or-lexrule.
+possession-rule-dtr := word-or-lexrule.
+;epistemic-modal-dtr := word-or-lexrule.
+;copula-overt-subj-rule-dtr := word-or-lexrule.
+slash-subj-rule-dtr := word-or-lexrule.
+slash-obj-rule-dtr := word-or-lexrule.
+
+;;; Lexical rule types
+
+number-lex-rule-super := add-only-no-ccont-rule & infl-lex-rule & possession-rule-dtr &
+  [ INFLECTED #infl,
+    DTR common-noun-noun-lex &
+        [ INFLECTED #infl ] ].
+
+plural-lex-rule := number-lex-rule-super &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM PL ].
+
+distributive-lex-rule := number-lex-rule-super &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM DSTR ].
+
+;;; DAI 2/11/14 removing copula-overt-subj-rule-dtr
+subject-lex-rule-super := add-only-no-ccont-rule & slash-obj-rule-dtr & slash-subj-rule-dtr &
+  [ INFLECTED [ SUBJECT-FLAG +,
+                A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                ASPECT-FLAG #aspect,
+                A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                VERB-FLAG #verb,
+                OBJECT-FLAG #object,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                TRANSITIVE-VERB-FLAG #transitive-verb,
+                NI-FLAG #ni-flag,
+                SUBJ-SLASH-FLAG #subj-slash-flag,
+                COMP-SLASH-FLAG #comp-slash-flag ],
+    DTR subject-rule-dtr &
+        [ SYNSEM.LOCAL.CAT.HEAD.AUX -,
+          INFLECTED [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                      I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                      A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                      ASPECT-FLAG #aspect,
+                      A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                      I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                      A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                      A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                      VERB-FLAG #verb & +,
+                      OBJECT-FLAG #object,
+                      I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                      TRANSITIVE-VERB-FLAG #transitive-verb,
+                      NI-FLAG #ni-flag,
+                      SUBJ-SLASH-FLAG #subj-slash-flag,
+                      COMP-SLASH-FLAG #comp-slash-flag ] ] ].
+
+subject-lex-rule-infl-super := subject-lex-rule-super & [ SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.OPT + ].
+
+;;; DAI 2/11/14 coreferencing SUBJ.OPT with SUBJ-OPT in HEAD
+;;; DAI 2017-09-29 removing
+
+add-1st-subj-lex-rule := infl-lex-rule & subject-lex-rule-infl-super &
+  [ INFLECTED.S-OR-O-CLITIC +,
+    SYNSEM.LOCAL.CAT [ VAL.SUBJ.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 1SG+1PL_excl+1DSTR ]]].
+
+;;; DAI 2017-09-29 removing topic stuff for mcb
+; add-1st-subj-topic-lex-rule := infl-lex-rule & subject-lex-rule-super &
+;  [ INFLECTED.S-OR-O-CLITIC +,
+;    SYNSEM.LOCAL.CAT [ VAL [ SUBJ.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 1SG+1PL_excl+1DSTR ],
+;                                          OPT - ]],
+;                       HEAD [ SUBJ-TOPIC +,
+;                              OBJ-TOPIC - ]]].
+
+add-2nd-subj-lex-rule := infl-lex-rule & subject-lex-rule-infl-super &
+  [ INFLECTED.S-OR-O-CLITIC +,
+    SYNSEM.LOCAL.CAT [ VAL.SUBJ.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 2nd ] ] ].
+
+;;; DAI 2017-09-29 removing topic stuff for mcb
+; add-2nd-subj-topic-lex-rule := infl-lex-rule & subject-lex-rule-super &
+;  [ INFLECTED.S-OR-O-CLITIC +,
+;    SYNSEM.LOCAL.CAT [ VAL [ SUBJ.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 2nd ],
+;                                          OPT - ]],
+;                       HEAD [ SUBJ-TOPIC +,
+;			      OBJ-TOPIC - ]]].
+
+add-3rd-m-subj-lex-rule := infl-lex-rule & subject-lex-rule-infl-super &
+  [ INFLECTED.S-OR-O-CLITIC +,
+    SYNSEM.LOCAL.CAT [ VAL.SUBJ.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+                                                                  GEND masc ]]]].
+
+;;; DAI 2017-09-29 removing topic stuff for mcb
+;add-3rd-m-subj-topic-lex-rule := infl-lex-rule & subject-lex-rule-super &
+;  [ INFLECTED.S-OR-O-CLITIC +,
+;    SYNSEM.LOCAL.CAT [ VAL [ SUBJ.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+;                                                                  GEND masc ],
+;                                          OPT - ]],
+;                       HEAD [ SUBJ-TOPIC +,
+;			      OBJ-TOPIC - ]]].
+;;    DTR.SYNSEM.LOCAL.CAT.HEAD.SUBJ-OPT #opt ].
+
+add-3rd-nm-subj-lex-rule := infl-lex-rule & subject-lex-rule-infl-super &
+  [ INFLECTED.S-OR-O-CLITIC +,
+    SYNSEM.LOCAL.CAT [ VAL.SUBJ.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+                                                                  GEND NON-masc ]]]].
+
+;;; DAI 2017-09-29 removing topic stuff for mcb
+;add-3rd-nm-subj-topic-lex-rule := infl-lex-rule & subject-lex-rule-super &
+;  [ INFLECTED.S-OR-O-CLITIC +,
+;    SYNSEM.LOCAL.CAT [ VAL [ SUBJ.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+;                                                                  GEND NON-masc ],
+;                                          OPT - ]],
+;                       HEAD [ SUBJ-TOPIC +,
+;			      OBJ-TOPIC - ]]].
+
+add-1st-incl-subj-lex-rule := infl-lex-rule & subject-lex-rule-infl-super &
+  [ INFLECTED.S-OR-O-CLITIC +,
+    SYNSEM.LOCAL.CAT [ VAL.SUBJ.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 1PL_incl ]]].
+
+;;; DAI 2017-09-29 removing topic stuff for mcb
+;add-1st-incl-subj-topic-lex-rule := infl-lex-rule & subject-lex-rule-super &
+;  [ INFLECTED.S-OR-O-CLITIC +,
+;    SYNSEM.LOCAL.CAT [ VAL [ SUBJ.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 1PL_incl ],
+;                                          OPT - ]],
+;                       HEAD [ SUBJ-TOPIC +,
+;			      OBJ-TOPIC - ]]].
+
+;;; DAI 2/11/14 This is a total hack, but we need copulas
+;;; to necessarily take a subject clitic. This means they can't go
+;;; through the subject-no-drop-lex-rule
+
+subject-no-drop-lex-rule := const-lex-rule & subject-lex-rule-super &
+  [ INFLECTED.S-OR-O-CLITIC #s-or-o-clitic,
+    DTR [ INFLECTED.S-OR-O-CLITIC #s-or-o-clitic,
+          SYNSEM.LOCAL.CAT.HEAD.N-COP - ],
+          ;;SYNSEM.LOCAL.CAT.HEAD.COMP-FIRST - ],
+    SYNSEM.LOCAL.CAT [ VAL.SUBJ.FIRST.OPT - ] ].
+
+;;; DAI 2017-09-29 adding OPT + to this rule
+;;; DAI 2020-09-11 splitting the morphology (here) and object marking (object-lex-rule-super) so clausal & object marking can both inherit from the orphology
+object-marker-lex-rule-super := add-only-no-ccont-rule & subject-rule-dtr &
+  [ INFLECTED [ OBJECT-FLAG +,
+                A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                SUBJECT-FLAG #subject,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                VERB-FLAG #verb,
+                A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                ASPECT-FLAG #aspect,
+                A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                TRANSITIVE-VERB-FLAG #transitive-verb,
+                NI-FLAG #ni-flag,
+                SUBJ-SLASH-FLAG #subj-slash-flag,
+                COMP-SLASH-FLAG #comp-slash-flag ],
+    DTR object-rule-dtr &
+        [ SYNSEM.LOCAL.CAT.HEAD [ AUX -,
+                                  QUOTATIVE - ],
+          INFLECTED [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                      I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                      A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                      SUBJECT-FLAG #subject,
+                      I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                      VERB-FLAG #verb,
+                      A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                      A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                      ASPECT-FLAG #aspect,
+                      A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                      I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                      TRANSITIVE-VERB-FLAG #transitive-verb & +,
+                      NI-FLAG #ni-flag,
+                      SUBJ-SLASH-FLAG #subj-slash-flag,
+                      COMP-SLASH-FLAG #comp-slash-flag ] ] ].
+
+;;; DAI 2020-01-27 adding speci + following O'Hagan 2018
+object-lex-rule-super := object-marker-lex-rule-super &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST [ OPT-CS in-foc,
+                                       LOCAL.CONT.HOOK.INDEX.SPECI + ] ].
+
+object-lex-rule-infl-super := object-lex-rule-super & [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.OPT + ].
+
+add-1st-obj-lex-rule := infl-lex-rule & object-lex-rule-infl-super &
+  [ INFLECTED.S-OR-O-CLITIC +,
+    SYNSEM.LOCAL.CAT [ VAL.COMPS.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 1SG+1PL_excl+1DSTR ]]].
+
+;add-1st-obj-topic-lex-rule := infl-lex-rule & object-lex-rule-super &
+;  [ INFLECTED.S-OR-O-CLITIC +,
+;    SYNSEM.LOCAL.CAT [ VAL.COMPS.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 1SG+1PL_excl+1DSTR,
+;                                       OPT - ]]].
+
+add-3rd-m-obj-lex-rule := infl-lex-rule & object-lex-rule-infl-super &
+  [ INFLECTED.S-OR-O-CLITIC +,
+    SYNSEM.LOCAL.CAT [ VAL.COMPS.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+                                                                     GEND masc ]]]].
+
+;;; DAI 2017-09-29 removing these
+;add-3rd-m-obj-topic-lex-rule := infl-lex-rule & object-lex-rule-super &
+;  [ INFLECTED.S-OR-O-CLITIC +,
+;    SYNSEM.LOCAL.CAT [ VAL.COMPS.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+;                                                                   GEND masc ],
+;                                       OPT - ],
+;		       HEAD [ OBJ-TOPIC +,
+;			      SUBJ-TOPIC - ]]].
+
+
+add-2nd-obj-lex-rule := infl-lex-rule & object-lex-rule-infl-super &
+  [ INFLECTED.S-OR-O-CLITIC +,
+    SYNSEM.LOCAL.CAT [ VAL.COMPS.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 2nd ]]].
+
+;add-2nd-obj-topic-lex-rule := infl-lex-rule & object-lex-rule-super &
+;  [ INFLECTED.S-OR-O-CLITIC +,
+;    SYNSEM.LOCAL.CAT [ VAL.COMPS.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 2nd,
+;                                       OPT - ],
+;		       HEAD [ OBJ-TOPIC +,
+;			      SUBJ-TOPIC - ]]].
+
+add-3rd-nm-obj-lex-rule := infl-lex-rule & object-lex-rule-infl-super &
+  [ INFLECTED.S-OR-O-CLITIC +,
+    SYNSEM.LOCAL.CAT [ VAL.COMPS.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+                                                                   GEND NON-masc ]]]].
+
+;add-3rd-nm-obj-topic-lex-rule := infl-lex-rule & object-lex-rule-super &
+;  [ INFLECTED.S-OR-O-CLITIC +,
+;    SYNSEM.LOCAL.CAT [ VAL.COMPS.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+;                                                                   GEND NON-masc ],
+;                                       OPT - ],
+;		       HEAD [ OBJ-TOPIC +,
+;			      SUBJ-TOPIC - ]]].
+
+
+;;; REM 3rd nm object rule for clausal verbs
+
+3rd-nm-obj-lex-rule-for-clause-verbs := infl-lex-rule & object-marker-lex-rule-super &
+  [ DTR.SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT [ HEAD verb,
+                                                     VAL [ SUBJ < >,
+                                                           SPR < >,
+                                                           COMPS < > ]]].
+
+;;; REM Added no-affix lexrule so we can drop objects again.
+;;; DAI 2017-10-27 This rule needs to not merely mark it as OPT + but remove it from the valence list
+;;; This is causing spurious ambiguity as-is.
+no-object-clitic-lex-rule := object-lex-rule-super & const-lex-rule &
+  [ INFLECTED.S-OR-O-CLITIC +,
+    SYNSEM.LOCAL.CAT [ VAL.COMPS.FIRST [ OPT + ]]].
+                                       ;;LOCAL.CONT.HOOK.INDEX.COG-ST in-foc ]]]. can't say this about mcb, only cox.
+
+;;; REM DTR's complement's head must be noun to prevent clause verbs from going
+;;; through
+object-no-drop-lex-rule := const-lex-rule & object-lex-rule-super &
+  [ INFLECTED.S-OR-O-CLITIC #s-or-o-clitic,
+    DTR [ INFLECTED.S-OR-O-CLITIC #s-or-o-clitic, 
+          SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD +nj ],
+    SYNSEM.LOCAL.CAT [ VAL.COMPS.FIRST.OPT - ]].
+
+aspect-directional-lex-rule-super := a-verb-reality-prefix-rule-dtr & a-verb-reality-suffix-or-i-verb-reality-suffix-rule-dtr & direct-ditransitive-object-rule-dtr & i-verb-reality-prefix-rule-dtr & infl-lex-rule & object-rule-dtr & subject-rule-dtr &
+  [  SYNSEM.LOCAL.CAT.HEAD.FORM finite,
+     INFLECTED [ ASPECT-FLAG +,
+                A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                SUBJECT-FLAG #subject,
+                A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                S-OR-O-CLITIC #s-or-o-clitic,
+                VERB-FLAG #verb,
+                OBJECT-FLAG #object,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                TRANSITIVE-VERB-FLAG #transitive-verb,
+                NI-FLAG #ni-flag,
+                SUBJ-SLASH-FLAG #subj-slash-flag,
+                COMP-SLASH-FLAG #comp-slash-flag ],
+    DTR aspect-directional-rule-dtr &
+        [ SYNSEM.LOCAL.CAT.HEAD [ AUX -,
+                                  QUOTATIVE - ],
+          INFLECTED [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                      I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                      A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                      SUBJECT-FLAG #subject,
+                      A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                      I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                      A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                      A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                      S-OR-O-CLITIC #s-or-o-clitic,
+                      VERB-FLAG #verb,
+                      OBJECT-FLAG #object,
+                      I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                      TRANSITIVE-VERB-FLAG #transitive-verb,
+                      NI-FLAG #ni-flag,
+                      SUBJ-SLASH-FLAG #subj-slash-flag,
+                      COMP-SLASH-FLAG #comp-slash-flag ] ] ].
+
+Aspect-lex-rule-super := a-verb-reality-prefix-rule-dtr & a-verb-reality-suffix-or-i-verb-reality-suffix-rule-dtr & add-only-no-ccont-rule & direct-ditransitive-object-rule-dtr & i-verb-reality-prefix-rule-dtr & object-rule-dtr & subject-rule-dtr &
+  [ INFLECTED [ ASPECT-FLAG +,
+                A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                SUBJECT-FLAG #subject,
+                A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                S-OR-O-CLITIC #s-or-o-clitic,
+                VERB-FLAG #verb,
+                OBJECT-FLAG #object,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                TRANSITIVE-VERB-FLAG #transitive-verb,
+                NI-FLAG #ni-flag,
+                SUBJ-SLASH-FLAG #subj-slash-flag,
+                COMP-SLASH-FLAG #comp-slash-flag ],
+    DTR Aspect-rule-dtr &
+        [ SYNSEM.LOCAL.CAT.HEAD [ AUX -,
+                                  QUOTATIVE - ],
+          INFLECTED [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                      I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                      A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                      SUBJECT-FLAG #subject,
+                      A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                      I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                      A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                      A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                      S-OR-O-CLITIC #s-or-o-clitic,
+                      VERB-FLAG #verb,
+                      OBJECT-FLAG #object,
+                      I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                      TRANSITIVE-VERB-FLAG #transitive-verb,
+                      NI-FLAG #ni-flag,
+                      SUBJ-SLASH-FLAG #subj-slash-flag,
+                      COMP-SLASH-FLAG #comp-slash-flag ] ] ].
+
+;;; DAI 2017-09-29
+;;; This is now a const-lex rule, no more adding -0
+imperfective-lex-rule := Aspect-lex-rule-super & const-lex-rule &
+  [ SYNSEM.LOCAL [ CONT.HOOK.INDEX.E.ASPECT imperfective,
+                   CAT.HEAD.FORM finite ] ].
+
+perfective-lex-rule := Aspect-lex-rule-super & infl-lex-rule &
+  [ SYNSEM.LOCAL [ CONT.HOOK.INDEX.E.ASPECT perfective,
+                   CAT.HEAD.FORM finite ] ].
+
+;;; DAI 2/20/14 because negated clauses are underspecified for aspect
+
+infinitive-aspect-lex-rule := Aspect-lex-rule-super & const-lex-rule &
+  [ SYNSEM.LOCAL.CAT.HEAD [ FORM nonfinite,
+                            AUX -,
+                            QUOTATIVE - ] ].
+
+abilitive-lex-rule := aspect-directional-lex-rule-super & cont-change-only-lex-rule & 
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.E.ASPECT perfective,
+    C-CONT [ RELS <! arg1-ev-relation & [ PRED "_can_v_rel",
+                                           LBL #lbl,
+                                           ARG0 #index,
+                                           ARG1 #harg ] !>,
+             HOOK [ LTOP #lbl,
+                    INDEX #index ],
+             HCONS <! qeq & [ HARG #harg,
+                               LARG #larg ] !> ],
+    DTR.SYNSEM.LOCAL [ CONT.HOOK.LTOP #larg,
+                       CAT.HEAD [ AUX -,
+                                  QUOTATIVE - ]]].
+
+;;; DAI 2020-09-11 assuming this is perfective since it is in Nanti
+returnative-lex-rule := aspect-directional-lex-rule-super & infl-add-only-lex-rule &
+  [ SYNSEM.LOCAL.CONT.HOOK.INDEX.E.ASPECT perfective ].
+
+;;; DAI 2017-09-10 this should ONLY feed into a-verb-reality-prefix-lex-rule-super, removing object-rule-dtr & subject-rule-dtr!
+i-verb-reality-suffix-lex-rule-super := add-only-no-ccont-rule & direct-ditransitive-object-rule-dtr & i-verb-reality-prefix-rule-dtr & infl-lex-rule & 
+  [ INFLECTED [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG +,
+                A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                SUBJECT-FLAG #subject,
+                A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                VERB-FLAG #verb,
+                OBJECT-FLAG #object,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                S-OR-O-CLITIC #s-or-o-clitic,
+                ASPECT-FLAG #aspect,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                TRANSITIVE-VERB-FLAG #transitive-verb,
+                NI-FLAG #ni-flag,
+                SUBJ-SLASH-FLAG #subj-slash-flag,
+                COMP-SLASH-FLAG #comp-slash-flag ],
+    DTR a-verb-reality-suffix-or-i-verb-reality-suffix-rule-dtr &
+        [ SYNSEM.LOCAL.CAT.HEAD [ AUX -,
+                                  QUOTATIVE - ],
+          INFLECTED [ A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                      A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                      SUBJECT-FLAG #subject,
+                      A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                      VERB-FLAG #verb,
+                      OBJECT-FLAG #object,
+                      A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                      S-OR-O-CLITIC #s-or-o-clitic,
+                      ASPECT-FLAG #aspect,
+                      I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb & +,
+                      TRANSITIVE-VERB-FLAG #transitive-verb,
+                      NI-FLAG #ni-flag,
+                      SUBJ-SLASH-FLAG #subj-slash-flag,
+                      COMP-SLASH-FLAG #comp-slash-flag ] ] ].
+
+;;; DAI 2/20/14
+;;; adding form finite to realist/irrealis verbs
+;;; hopefully this is consistent across the rest of the grammar too
+
+i-verb-irrealis-suffix-lex-rule := i-verb-reality-suffix-lex-rule-super &
+  [ INFLECTED [ I-VERB-IRREALIS-SUFFIX-FLAG +,
+                I-VERB-IRREALIS-PREFIX-FLAG - ],
+    SYNSEM.LOCAL [ CONT.HOOK.INDEX.E.MOOD Irrealis,
+                   CAT.HEAD.FORM finite ] ].
+
+i-verb-realis-suffix-lex-rule := i-verb-reality-suffix-lex-rule-super &
+  [ INFLECTED [ I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix ],
+    DTR.INFLECTED [ I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                    I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix ],
+    SYNSEM.LOCAL [ CONT.HOOK.INDEX.E.MOOD Realis,
+		   CAT.HEAD.FORM finite ] ].
+
+;;; DAI 2/20/14 underspecifying so that te/ha can give a verb its reality status
+
+i-verb-unspecified-realis-suffix-lex-rule := i-verb-reality-suffix-lex-rule-super &
+  [ INFLECTED [ I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix ],
+    DTR.INFLECTED [ I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                    I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix ],
+    SYNSEM.LOCAL.CAT.HEAD.FORM realis-form ].
+
+i-verb-unspecified-irrealis-suffix-lex-rule := i-verb-reality-suffix-lex-rule-super &
+  [ INFLECTED [ I-VERB-IRREALIS-SUFFIX-FLAG +,
+                I-VERB-IRREALIS-PREFIX-FLAG - ],
+    SYNSEM.LOCAL.CAT.HEAD.FORM irrealis-form ].
+
+;;; DAI 2017-09-10 this should ONLY feed into a-verb-reality-prefix-lex-rule-super, removing object-rule-dtr & subject-rule-dtr!
+a-verb-reality-suffix-lex-rule-super := a-verb-reality-prefix-rule-dtr & add-only-no-ccont-rule & direct-ditransitive-object-rule-dtr & infl-lex-rule & 
+  [ INFLECTED [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG +,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                SUBJECT-FLAG #subject,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                VERB-FLAG #verb,
+                OBJECT-FLAG #object,
+                A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                S-OR-O-CLITIC #s-or-o-clitic,
+                ASPECT-FLAG #aspect,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                TRANSITIVE-VERB-FLAG #transitive-verb,
+                NI-FLAG #ni-flag,
+                SUBJ-SLASH-FLAG #subj-slash-flag,
+                COMP-SLASH-FLAG #comp-slash-flag ],
+    DTR a-verb-reality-suffix-or-i-verb-reality-suffix-rule-dtr &
+        [ SYNSEM.LOCAL.CAT.HEAD [ AUX -,
+                                  QUOTATIVE - ],
+          INFLECTED [ A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb & +,
+                      I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                      SUBJECT-FLAG #subject,
+                      I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                      VERB-FLAG #verb,
+                      OBJECT-FLAG #object,
+                      A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                      S-OR-O-CLITIC #s-or-o-clitic,
+                      ASPECT-FLAG #aspect,
+                      I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                      TRANSITIVE-VERB-FLAG #transitive-verb,
+                      NI-FLAG #ni-flag,
+                      SUBJ-SLASH-FLAG #subj-slash-flag,
+                      COMP-SLASH-FLAG #comp-slash-flag ] ] ].
+
+a-verb-irrealis-suffix-lex-rule := a-verb-reality-suffix-lex-rule-super &
+  [ INFLECTED [ A-VERB-IRREALIS-PREFIX-FLAG -,
+                A-VERB-IRREALIS-SUFFIX-FLAG + ],
+    SYNSEM.LOCAL [ CONT.HOOK.INDEX.E.MOOD Irrealis,
+		   CAT.HEAD.FORM finite ] ].
+
+a-verb-realis-suffix-lex-rule := a-verb-reality-suffix-lex-rule-super &
+  [ INFLECTED [ A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix ],
+    DTR.INFLECTED [ A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                    A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix ],
+    SYNSEM.LOCAL [ CONT.HOOK.INDEX.E.MOOD Realis,
+		   CAT.HEAD.FORM finite ] ].
+
+a-verb-unspecified-irrealis-suffix-lex-rule := a-verb-reality-suffix-lex-rule-super &
+  [ INFLECTED [ A-VERB-IRREALIS-PREFIX-FLAG -,
+                A-VERB-IRREALIS-SUFFIX-FLAG + ],
+    SYNSEM.LOCAL.CAT.HEAD.FORM irrealis-form ].
+
+a-verb-unspecified-realis-suffix-lex-rule := a-verb-reality-suffix-lex-rule-super &
+  [ INFLECTED [ A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix ],
+    DTR.INFLECTED [ A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                    A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix ],
+    SYNSEM.LOCAL.CAT.HEAD.FORM realis-form ].
+
+i-verb-reality-prefix-lex-rule-super := add-only-no-ccont-rule & direct-ditransitive-object-rule-dtr & object-rule-dtr & subject-rule-dtr &
+  [ INFLECTED [ A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG +,
+                A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                SUBJECT-FLAG #subject,
+                ASPECT-FLAG #aspect,
+                A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                S-OR-O-CLITIC #s-or-o-clitic,
+                VERB-FLAG #verb,
+                OBJECT-FLAG #object,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                TRANSITIVE-VERB-FLAG #transitive-verb,
+                NI-FLAG #ni-flag,
+                SUBJ-SLASH-FLAG #subj-slash-flag,
+                COMP-SLASH-FLAG #comp-slash-flag ],
+    DTR i-verb-reality-prefix-rule-dtr &
+        [ SYNSEM.LOCAL.CAT.HEAD [ AUX -,
+                                  QUOTATIVE - ],
+          INFLECTED [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix & +,
+                      A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                      SUBJECT-FLAG #subject,
+                      ASPECT-FLAG #aspect,
+                      A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                      I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                      A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                      S-OR-O-CLITIC #s-or-o-clitic,
+                      VERB-FLAG #verb,
+                      OBJECT-FLAG #object,
+                      I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                      TRANSITIVE-VERB-FLAG #transitive-verb,
+                      NI-FLAG #ni-flag,
+                      SUBJ-SLASH-FLAG #subj-slash-flag,
+                      COMP-SLASH-FLAG #comp-slash-flag ] ] ].
+
+;;; DAI 2/20/14
+;;; removing mood restraints on reality prefixes - they are extraneous
+
+i-verb-irrealis-prefix-lex-rule := i-verb-reality-prefix-lex-rule-super & infl-lex-rule &
+  [ DTR.INFLECTED.I-VERB-IRREALIS-SUFFIX-FLAG +,
+    INFLECTED.I-VERB-IRREALIS-PREFIX-FLAG + ].
+
+i-verb-realis-prefix-lex-rule := const-lex-rule & i-verb-reality-prefix-lex-rule-super &
+  [ INFLECTED.I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+    DTR.INFLECTED.I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix ].
+
+a-verb-reality-prefix-lex-rule-super := add-only-no-ccont-rule & direct-ditransitive-object-rule-dtr & object-rule-dtr & subject-rule-dtr & slash-obj-rule-dtr & slash-subj-rule-dtr &
+  [ INFLECTED [ A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG +,
+                A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                SUBJECT-FLAG #subject,
+                ASPECT-FLAG #aspect,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                S-OR-O-CLITIC #s-or-o-clitic,
+                VERB-FLAG #verb,
+                OBJECT-FLAG #object,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                TRANSITIVE-VERB-FLAG #transitive-verb,
+                NI-FLAG #ni-flag,
+                SUBJ-SLASH-FLAG #subj-slash-flag,
+                COMP-SLASH-FLAG #comp-slash-flag ],
+    DTR a-verb-reality-prefix-rule-dtr &
+        [ SYNSEM.LOCAL.CAT.HEAD [ AUX -,
+                                  QUOTATIVE - ],
+          INFLECTED [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix & +,
+                      I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                      A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                      SUBJECT-FLAG #subject,
+                      ASPECT-FLAG #aspect,
+                      I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                      A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                      S-OR-O-CLITIC #s-or-o-clitic,
+                      VERB-FLAG #verb,
+                      OBJECT-FLAG #object,
+                      I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                      TRANSITIVE-VERB-FLAG #transitive-verb,
+                      NI-FLAG #ni-flag,
+                      SUBJ-SLASH-FLAG #subj-slash-flag,
+                      COMP-SLASH-FLAG #comp-slash-flag ] ] ].
+
+a-verb-irrealis-prefix-lex-rule := a-verb-reality-prefix-lex-rule-super & infl-lex-rule &
+  [ DTR.INFLECTED.A-VERB-IRREALIS-SUFFIX-FLAG +,
+    INFLECTED.A-VERB-IRREALIS-PREFIX-FLAG + ].
+
+a-verb-realis-prefix-lex-rule := a-verb-reality-prefix-lex-rule-super & const-lex-rule &
+  [ INFLECTED.A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+    DTR.INFLECTED.A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix ].
+
+;;; DAI 2020-07-31 adding contrastive
+contrastive-demonstrative-lex-rule := infl-add-only-no-rels-hcons-lex-rule &
+  [ C-CONT.ICONS <! contrast & [ TARGET #noun ] !>,
+    DTR [ INFLECTED infl-satisfied,
+          SYNSEM.LOCAL.CAT [ HEAD det,
+                             VAL.SPEC.FIRST.LOCAL.CONT.HOOK.INDEX #noun ] ] ].
+
+verbal-classifier-lex-rule := infl-add-only-lex-rule & argument-number-rule-dtr & Aspect-rule-dtr & aspect-directional-rule-dtr & a-verb-reality-prefix-rule-dtr & a-verb-reality-suffix-or-i-verb-reality-suffix-rule-dtr & direct-ditransitive-object-rule-dtr & i-verb-reality-prefix-rule-dtr & object-rule-dtr & subject-rule-dtr &
+  [ INFLECTED #infl,
+    DTR main-verb-lex & [ INFLECTED #infl ] ].
+
+;;; DAI 2020-07-31 pronominal possession, pulling this largely from the Nuuchahnulth grammar
+poss-noun-lex-rule-super := infl-lex-rule & 
+                            same-cont-lex-rule & 
+                            same-head-lex-rule &
+                            same-hc-light-lex-rule &
+                            same-posthead-lex-rule &
+                            same-mc-lex-rule &
+  [ SYNSEM.LOCAL.CAT.VAL [ SUBJ < >,
+                           COMPS < [ LOCAL [ CAT [ HEAD noun,
+                                                   VAL [ SUBJ < >,
+                                                         COMPS < >,
+                                                         SPEC < >,
+                                                         SPR < > ] ],
+                                             CONT.HOOK.INDEX #possessor ] ] >,
+                           SPR #spr,
+                           SPEC < > ],
+    C-CONT [ RELS <! arg12-ev-relation &
+                     [ PRED "poss_rel",
+                       LBL #lbl,
+                       ARG1 #possessum,
+                       ARG2 #possessor ], quant-relation &
+                                          [ PRED "exist_q_rel",
+                                            ARG0 #possessum,
+                                            RSTR #harg ] !>,
+             HCONS <! qeq &
+                      [ HARG #harg,
+                        LARG #lbl ] !>,
+             ICONS <!  !> ],
+    DTR possession-rule-dtr & [ INFLECTED infl-satisfied,
+          SYNSEM.LOCAL [ CAT [ HEAD noun,
+                               VAL.SPR #spr ],
+                         CONT.HOOK.INDEX #possessum ] ] ].
+
+3m-poss-noun-lex-rule := poss-noun-lex-rule-super &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+                                                                 GEND masc ] ].
+
+3nm-poss-noun-lex-rule := poss-noun-lex-rule-super &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+                                                                 GEND non-masc ] ].
+
+;;; DAI 2020-09-11 adding subordinate clause lex rule, requiring that its daughter be infl-satisfied
+subordinate-clause-lex-rule := infl-add-only-lex-rule &
+  [ INFLECTED #infl,
+    DTR [ INFLECTED infl-satisfied & #infl ] ].
+
+;;; DAI 2020-08-28 dummy lex rules to add morphology without adding the semantics (for the paper)
+dummy-lex-rule-super := infl-add-only-lex-rule &
+  [ INFLECTED #infl,
+    DTR [ INFLECTED #infl ] ].
+
+dummy-lex-rule := argument-number-rule-dtr & object-rule-dtr & i-verb-reality-prefix-rule-dtr & a-verb-reality-suffix-or-i-verb-reality-suffix-rule-dtr & subject-rule-dtr & a-verb-reality-prefix-rule-dtr & Aspect-rule-dtr & aspect-directional-rule-dtr & direct-ditransitive-object-rule-dtr & slash-subj-rule-dtr & slash-obj-rule-dtr & dummy-lex-rule-super. 
+
+pre-arg-number-dummy-lex-rule := dummy-lex-rule-super & argument-number-rule-dtr & Aspect-rule-dtr & aspect-directional-rule-dtr & a-verb-reality-prefix-rule-dtr & a-verb-reality-suffix-or-i-verb-reality-suffix-rule-dtr & add-only-no-ccont-rule & direct-ditransitive-object-rule-dtr & i-verb-reality-prefix-rule-dtr & object-rule-dtr & subject-rule-dtr
+  [ DTR verb-lex ].
+
+pre-aspect-dummy-lex-rule := dummy-lex-rule-super & aspect-rule-dtr & 
+  [ DTR verb-lex ].
+
+;;; DAI 2020-09-11 should ideally flip an INFL value on items that need to be inalienably possessed, not modeled currently
+alienably-possessed-suffix := possession-rule-dtr & infl-add-only-lex-rule &
+  [ INFLECTED #infl,
+    DTR common-noun-noun-lex & [ INFLECTED #infl,
+          SYNSEM.LOCAL.CAT.HEAD noun ] ].
+
+argument-number-lex-rule-super := Aspect-rule-dtr & aspect-directional-rule-dtr & a-verb-reality-prefix-rule-dtr & a-verb-reality-suffix-or-i-verb-reality-suffix-rule-dtr & add-only-no-ccont-rule & direct-ditransitive-object-rule-dtr & i-verb-reality-prefix-rule-dtr & infl-lex-rule & object-rule-dtr & subject-rule-dtr &
+  [ INFLECTED #infl,
+    DTR argument-number-rule-dtr &
+        [ SYNSEM.LOCAL.CAT.HEAD [ AUX -,
+                                  QUOTATIVE - ],
+          INFLECTED #infl ] ].
+
+distributive-subject-object-lex-rule := argument-number-lex-rule-super &
+  [ DTR.INFLECTED.TRANSITIVE-VERB-FLAG +,
+    SYNSEM.LOCAL.CAT.VAL [ SUBJ.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM DSTR,
+                           COMPS.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM DSTR ] ].
+
+distributive-object-lex-rule := argument-number-lex-rule-super &
+  [ DTR.INFLECTED.TRANSITIVE-VERB-FLAG +,
+    SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM DSTR ].
+
+plural-subject-object-lex-rule := argument-number-lex-rule-super &
+  [ DTR.INFLECTED.TRANSITIVE-VERB-FLAG +,
+    SYNSEM.LOCAL.CAT.VAL [ SUBJ.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM PL,
+                           COMPS.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM PL ] ].
+
+plural-object-lex-rule := argument-number-lex-rule-super &
+  [ DTR.INFLECTED.TRANSITIVE-VERB-FLAG +,
+    SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM PL ].
+
+plural-subject-lex-rule := argument-number-lex-rule-super &
+  [ SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM PL ].
+
+distributive-subject-lex-rule := argument-number-lex-rule-super &
+  [ SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM DSTR ].
+
+focus-cleft-lex-rule-super := add-only-no-rels-hcons-rule & infl-lex-rule &
+  [ INFLECTED infl-satisfied,
+    DTR intransitive-verb-lex ].
+
+imperfective-focus-cleft-lex-rule := add-icons-subj-rule & focus-cleft-lex-rule-super &
+  [ SYNSEM.LOCAL [ CONT.HOOK.INDEX.E.ASPECT imperfective,
+                   CAT.VAL.SUBJ.FIRST.LOCAL.CONT.HOOK.ICONS-KEY focus ] ].
+
+;;; DAI 2/5/14 removing subject-rule-dtr from type for perfective-focus-cleft-lex-rule (adding too much ambiguity)
+
+perfective-focus-cleft-lex-rule := add-icons-subj-rule & focus-cleft-lex-rule-super & 
+  [ SYNSEM.LOCAL [ CONT.HOOK.INDEX.E.ASPECT perfective,
+                   CAT.VAL.SUBJ.FIRST.LOCAL.CONT.HOOK.ICONS-KEY focus ] ].
+
+direct-ditransitive-object-lex-rule-super := add-only-no-ccont-rule & object-rule-dtr & subject-rule-dtr &
+  [ INFLECTED [ A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-etc,
+                A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                SUBJECT-FLAG #subject,
+                ASPECT-FLAG #aspect,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                S-OR-O-CLITIC #s-or-o-clitic,
+                VERB-FLAG #verb,
+                OBJECT-FLAG #object,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                TRANSITIVE-VERB-FLAG #transitive-verb,
+                NI-FLAG +,
+                SUBJ-SLASH-FLAG #subj-slash-flag,
+                COMP-SLASH-FLAG #comp-slash-flag ],
+    DTR direct-ditransitive-object-rule-dtr &
+        [ SYNSEM.LOCAL.CAT.HEAD [ AUX -,
+                                  QUOTATIVE - ],
+          INFLECTED [ A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-etc,
+                A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                SUBJECT-FLAG #subject,
+                ASPECT-FLAG #aspect,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                S-OR-O-CLITIC #s-or-o-clitic,
+                VERB-FLAG #verb,
+                OBJECT-FLAG #object,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                TRANSITIVE-VERB-FLAG #transitive-verb,
+                NI-FLAG -,
+                SUBJ-SLASH-FLAG #subj-slash-flag,
+                COMP-SLASH-FLAG #comp-slash-flag ] ] ].
+
+3rd-person-ditransitive-object-lex-rule := direct-ditransitive-object-lex-rule-super & infl-lex-rule &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS.REST.FIRST [ LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 3rd,
+                                            OPT + ] ].
+
+no-ni-clitic-lex-rule := direct-ditransitive-object-lex-rule-super & nocoord &
+  [ INFLECTED.NI-FLAG + ,
+    SYNSEM.LOCAL.CAT.VAL.COMPS.REST.FIRST.OPT + ].
+                                            ;;LOCAL.CONT.HOOK.INDEX.COG-ST in-foc ]]. not in mcb
+
+;ni-object-no-drop-lex-rule := const-lex-rule & direct-ditransitive-object-lex-rule-super &
+;  [ DTR [ SYNSEM.LOCAL.CAT.VAL.COMPS.REST.FIRST.LOCAL.CAT.HEAD noun ],
+;    SYNSEM.LOCAL.CAT.VAL.COMPS.REST.FIRST.OPT - ].
+
+slash-obj-lex-rule-super := lex-rule & slash-subj-rule-dtr & 
+  [ INFLECTED [ OBJECT-FLAG +,
+                SUBJECT-FLAG #subject-flag,
+                A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                S-OR-O-CLITIC #s-or-o-clitic,
+                ASPECT-FLAG #aspect,
+                A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                VERB-FLAG #verb,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                TRANSITIVE-VERB-FLAG #transitive-verb,
+                NI-FLAG #ni-flag,
+                SUBJ-SLASH-FLAG #subj-slash-flag,
+                COMP-SLASH-FLAG + ],
+    DTR slash-obj-rule-dtr &
+        [ SYNSEM.LOCAL.CAT.HEAD.AUX -,
+          INFLECTED [ SUBJECT-FLAG #subject-flag,
+                      A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                      I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                      A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                      S-OR-O-CLITIC #s-or-o-clitic,
+                      ASPECT-FLAG #aspect,
+                      A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                      I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                      A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                      A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                      VERB-FLAG #verb & +,
+                      I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                      TRANSITIVE-VERB-FLAG #transitive-verb,
+                      NI-FLAG #ni-flag,
+                      SUBJ-SLASH-FLAG #subj-slash-flag,
+                      COMP-SLASH-FLAG - ] ] ].
+
+;;; 2020-07-17 forcing this to apply after slash-obj-rule (comp-slash-flag na-or-+)
+slash-subj-lex-rule-super := lex-rule & 
+  [ INFLECTED [ SUBJECT-FLAG +,
+                A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                S-OR-O-CLITIC #s-or-o-clitic,
+                ASPECT-FLAG #aspect,
+                A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                VERB-FLAG #verb,
+                OBJECT-FLAG #object,
+                I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                TRANSITIVE-VERB-FLAG #transitive-verb,
+                NI-FLAG #ni-flag,
+                SUBJ-SLASH-FLAG +,
+                COMP-SLASH-FLAG + ],
+    DTR slash-subj-rule-dtr &
+        [ SYNSEM.LOCAL.CAT.HEAD.AUX -,
+          INFLECTED [ A-VERB-REALITY-SUFFIX-OR-I-VERB-REALITY-SUFFIX-FLAG #a-verb-reality-suffix-or-i-verb-reality-suffix,
+                      I-VERB-IRREALIS-PREFIX-FLAG #i-verb-irrealis-prefix,
+                      A-VERB-IRREALIS-SUFFIX-FLAG #a-verb-irrealis-suffix,
+                      S-OR-O-CLITIC #s-or-o-clitic,
+                      ASPECT-FLAG #aspect,
+                      A-VERB-IRREALIS-PREFIX-FLAG #a-verb-irrealis-prefix,
+                      I-VERB-IRREALIS-SUFFIX-FLAG #i-verb-irrealis-suffix,
+                      A-VERB-REALITY-PREFIX-OR-I-VERB-REALITY-PREFIX-FLAG #a-verb-reality-prefix-or-i-verb-reality-prefix,
+                      A-INTRANSITIVE-VERB-VERB-OR-A-TRANSITIVE-VERB-VERB-FLAG #a-intransitive-verb-verb-or-a-transitive-verb-verb,
+                      VERB-FLAG #verb & +,
+                      OBJECT-FLAG #object,
+                      I-INTRANSITIVE-VERB-VERB-OR-I-TRANSITIVE-VERB-VERB-FLAG #i-intransitive-verb-verb-or-i-transitive-verb-verb,
+                      TRANSITIVE-VERB-FLAG #transitive-verb,
+                      NI-FLAG #ni-flag,
+                      SUBJ-SLASH-FLAG -, 
+                      COMP-SLASH-FLAG na-or-+ ] ] ].
+
+;;; DAI 2017-11-21 Allow verbs with incorporated pronouns to introduce SLASHed subjects
+;;; Unfortunately I need a non-slash-lex-rule, too
+;;; TODO implement for ditransitives
+slash-subj-lex-rule := slash-subj-lex-rule-super & val-change-only-lex-rule &
+  [ SYNSEM.LOCAL.CAT.VAL [ SUBJ < >,
+                           COMPS #comps,
+                           SPR #spr ],
+    DTR.SYNSEM [ LOCAL.CAT.VAL [ SUBJ < gap & [ OPT +,
+                                                NON-LOCAL.SLASH #slash ] >,
+                                 COMPS #comps,
+                                 SPR #spr ],
+                 NON-LOCAL.SLASH #slash ] ].
+
+;;; DAI 2020-08-28 This rule has to be divided in two, to constrain the dlist on SLASH.
+;;; Keeping the old one around for reference.
+; no-slash-subj-lex-rule := slash-subj-lex-rule-super & add-only-no-ccont-rule.
+
+no-slash-subj-lex-rule := slash-subj-lex-rule-super & add-only-no-ccont-rule.
+
+;no-slashes-lex-rule := slash-subj-lex-rule-super & add-only-no-ccont-rule.
+
+
+slash-obj-lex-rule := slash-obj-lex-rule-super & val-change-only-lex-rule &
+  [ SYNSEM.LOCAL.CAT.VAL [ SUBJ #subj,
+                           COMPS < >,
+                           SPR #spr ],
+    DTR.SYNSEM [ LOCAL.CAT.VAL [ SUBJ #subj,
+                                 COMPS < gap & [ OPT +,
+                                                 NON-LOCAL.SLASH #slash ] >,
+                                 SPR #spr ],
+                 NON-LOCAL.SLASH #slash ] ].
+
+; slash-obj-lex-rule := slash-obj-lex-rule-super & val-change-only-lex-rule &
+;   [ SYNSEM.LOCAL [ CONT.ICONS <! qeq & [ HARG #harg,
+;                                          LARG #larg ] !>,
+;                    CAT.VAL.COMPS < [ OPT +,
+;                                      LOCAL.CONT.HOOK.LTOP #harg,
+;                                      NON-LOCAL.SLASH <! [ LOCAL.CONT.HOOK.LTOP #larg ] !> ], ... > ] ].
+
+no-slash-obj-lex-rule := slash-obj-lex-rule-super & add-only-no-ccont-rule.
+
+;slash-subj-lex-rule := add-only-no-ccont-rule &
+;  [ INFLECTED infl-satisfied,
+;    SYNSEM.LOCAL [ CONT.ICONS <! qeq & [ HARG #harg,
+;                                       LARG #larg ] !>,
+;                   CAT.HEAD verb ],
+;    DTR.SYNSEM [ LOCAL.CAT.VAL.SUBJ < [ OPT +,
+;                                        LOCAL.CONT.HOOK.LTOP #harg ] >,
+;                 NON-LOCAL.SLASH <! [ LOCAL.CONT.HOOK.LTOP #larg ] !> ] ].
+
+;;; REM Added this lexical rule
+;;; DAI 3/5/14 making only apply to stative-verbs
+
+deverbal-adjective-lex-rule := infl-lex-rule & cat-change-only-lex-rule &
+  [ SYNSEM [ LOCAL [ CAT [ HEAD adj &
+                                  [ MOD < [ LOCAL [ CAT [ HEAD noun,
+                                                          VAL.SPR cons ], 
+                                                    CONT.HOOK.INDEX #index ]]> ],
+                           VAL [ SPR < >,
+                                 SUBJ < >,
+                                 COMPS < >,
+                                 SPEC < > ],
+                           POSTHEAD - ]]],
+    DTR stative-verb-lex &
+          [ SYNSEM.LOCAL [ CONT.HOOK.XARG #index,
+                           CAT.HEAD.AUX - ]]].
+
+;;; REM 2/16/14 Adding this lexical rule
+;;; DAI 2/18/14 oops, bye epistemic
+
+;epistemic-modal-lex-rule := infl-add-only-lex-rule &
+;  [ C-CONT [ RELS <! arg1-ev-relation & [ PRED "_can_v_rel",
+;                                           LBL #lbl,
+;                                           ARG0 #index,
+;                                           ARG1 #harg ] !>,
+;             HOOK [ LTOP #lbl,
+;                    INDEX #index ],
+;             HCONS <! qeq & [ HARG #harg,
+;                               LARG #larg ] !> ],
+;    DTR epistemic-modal-dtr & [ SYNSEM.LOCAL.CONT.HOOK.LTOP #larg,
+;                                INFLECTED #infl ],
+;    INFLECTED #infl ].
+             
+
+;;; REM added this lexical rule 2/9/14
+;;; DAI 2/11/14 ... and removing
+
+;copula-overt-subj-lex-rule := add-only-no-ccont-rule &
+;  [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ OPT - ] >,
+;    DTR copula-overt-subj-rule-dtr &
+;          [ SYNSEM.LOCAL.CAT.HEAD.COMP-FIRST + ]].
+
+;;;;;;;;;;;;;;;;;;;
+;;; Phrasal Types
+;;;;;;;;;;;;;;;;;;;
+
+nf-comp-head-phrase := head-nf-comp-phrase-super & head-final &
+  [ HEAD-DTR.SYNSEM [ LIGHT + ],
+    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
+                                CONT.HOOK.ICONS-KEY focus ] ].
+
+head-nf-subj-phrase-super := basic-head-subj-phrase & declarative-clause & narrow-focus &
+  [ NON-HEAD-DTR.SYNSEM.INFOSTR-FLAG + ].
+
+head-nf-comp-phrase-super := basic-head-comp-phrase & narrow-focus &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS #comps,
+    HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < #synsem . #comps >,
+    NON-HEAD-DTR.SYNSEM #synsem &
+                        [ INFOSTR-FLAG + ] ].
+
+;;; DAI 5/6/14 should only be topic (why'd we say focus or topic?)
+
+narrow-focused-phrase := head-only & no-rels-hcons-rule &
+  [ C-CONT [ HOOK #hook,
+             ICONS <! focus & #icons &
+                      [ TARGET #target ] !> ],
+    SYNSEM [ LIGHT -,
+             INFOSTR-FLAG +,
+             LOCAL [ CAT.VAL [ SPR < >,
+                               SUBJ < >,
+                               COMPS < >,
+                               SPEC < > ],
+                     CONT.HOOK [ INDEX #target,
+                                 ICONS-KEY #icons ] ] ],
+    HEAD-DTR.SYNSEM [ LIGHT -,
+                      INFOSTR-FLAG -,
+                      LOCAL [ CAT.HEAD noun,
+                              CONT [ HOOK #hook,
+                                     ICONS <!  !> ] ] ] ].
+
+
+;;; Constraint on MC used to be part of matrix.tdl
+;;; it applies to all wo implementations, except for v2
+
+;;; DAI 2/27/14 Trying to get topic working
+;;; topic must be SUBJ-TOPIC + inflected by morphology
+;;; msut also have a saturated/satisfied COMPS list (is at edges of clause)
+;;; DAI 2017-09-29 removing SUBJ-TOPIC stuff
+topic-subj-phrase-basic := decl-head-subj-phrase &
+  [ SYNSEM.LOCAL [ CONT.HOOK #hook ],
+    HEAD-DTR.SYNSEM [ LOCAL [ CAT [ HEAD verb, ;; & [ SUBJ-TOPIC + ],
+				      VAL [ SUBJ < #topic >,
+				            COMPS < > ] ],
+                      CONT.HOOK #hook ] ],
+    NON-HEAD-DTR.SYNSEM #topic & [ LOCAL [ CAT.HEAD noun,
+					   CONT.HOOK.ICONS-KEY topic ]]].
+
+topic-obj-phrase-basic := basic-head-1st-comp-phrase &
+  [ SYNSEM.LOCAL [ CONT.HOOK #hook ],
+    HEAD-DTR.SYNSEM [ LOCAL [ CAT [ HEAD verb,
+				      VAL [ COMPS < #topic > ] ],
+                      CONT.HOOK #hook ] ],
+    NON-HEAD-DTR.SYNSEM #topic & [ LOCAL [ CAT.HEAD noun,
+					   CONT.HOOK.ICONS-KEY topic ]]].
+
+;; TODO: remove
+;;topicsubj-head-phrase := topic-subj-phrase-basic & head-final.
+;;head-topicsubj-phrase := topic-subj-phrase-basic & head-initial.
+;;topicobj-head-phrase := topic-obj-phrase-basic & head-final.
+;;head-topicobj-phrase := topic-obj-phrase-basic & head-initial.
+
+;;; DAI 2017-11-19
+;;; TODO: 0-dlist & [ LIST < > ] is the way of saying empty slash? check
+;arg-slash := head-nexus-phrase & head-compositional & 
+;			  basic-binary-headed-phrase & no-ccont-rule &
+;  [ ;;SYNSEM.NON-LOCAL.SLASH < [ LOCAL.CONT.HOOK.INDEX #index ] >,
+;    HEAD-DTR [ ;; ARG-ST < ... [ LOCAL.CONT.HOOK.INDEX #index ], ... >, ;;doesn't work in tdl! :(
+;               SYNSEM.NON-LOCAL.SLASH <! !> ] ].
+
+;subj-head-slash-phrase := subj-head-phrase & arg-slash &
+;  [ SYNSEM.NON-LOCAL.SLASH.LIST < [ LOCAL.CONT.HOOK.INDEX #index ] >,
+;    HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CONT.HOOK.INDEX #index ] > ].
+
+;head-subj-slash-phrase := head-subj-phrase & arg-slash &
+;  [ SYNSEM.NON-LOCAL.SLASH.LIST < [ LOCAL.CONT.HOOK.INDEX #index ] >,
+;    HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CONT.HOOK.INDEX #index ] > ].
+
+;comp-head-slash-phrase := comp-head-phrase & arg-slash &
+;  [ SYNSEM.NON-LOCAL.SLASH.LIST < [ LOCAL.CONT.HOOK.INDEX #index ] >,
+;    HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CONT.HOOK.INDEX #index ] ... > ].
+
+;head-comp-slash-phrase := head-comp-phrase & arg-slash &
+;  [ SYNSEM.NON-LOCAL.SLASH.LIST < [ LOCAL.CONT.HOOK.INDEX #index ] >,
+;    HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CONT.HOOK.INDEX #index ] ... > ].
+
+;head-opt-subj-slash-phrase := decl-head-opt-subj-phrase &
+;  [ SYNSEM.NON-LOCAL.SLASH.LIST < [ LOCAL.CONT.HOOK.INDEX #index ] >,
+;    HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CONT.HOOK.INDEX #index ] > ].
+
+;head-opt-comp-slash-phrase := basic-head-opt-comp-phrase &
+;  [ SYNSEM.NON-LOCAL.SLASH.LIST < [ LOCAL.CONT.HOOK.INDEX #index ] >,
+;    HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CONT.HOOK.INDEX #index ] ... > ].
+
+; 2020-08-28 requiring non-head-dtr to be spec empty, cog-st fam-or-more
+left-dislocated-arg-phrase := basic-head-filler-phrase & head-final & no-ccont-rule & 
+  [ SYNSEM.LOCAL.CAT.VAL.SUBJ < >,
+    HEAD-DTR.SYNSEM.LOCAL.CAT [ VAL [ SUBJ < >,
+                                      COMPS < > ],
+                                HEAD verb ],
+    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.VAL [ SPEC < > ],
+                                CONT.HOOK [ ICONS-KEY focus-or-topic,
+                                            INDEX.COG-ST fam-or-more ] ] ].
+
+right-dislocated-arg-phrase := basic-head-filler-phrase & head-initial &
+  [ NON-HEAD-DTR.SYNSEM.LOCAL.CONT.HOOK.ICONS-KEY topic ].
+
+;;; REM added OPT - constraint so that we can drop objects again
+;;; Also adding head-subj-phrase and comp-head-phrase for adjective copulas
+;;; 2/9/14
+;;; DAI 2017-10-31 verbal postposed complements are non-focus
+;;; DAI 2017-11-19 restricting to N-COP - ('n'-copula can't go through this rule)
+;;; DAI 2020-07-17 non-focus constraint is breaking onti verbal focus, removing for now
+;;;              NON-HEAD-DTR.SYNSEM.LOCAL.CONT.HOOK.ICONS-KEY non-focus,
+head-comp-phrase := basic-head-1st-comp-phrase & head-initial &
+  [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.N-COP - ].
+
+;;; 2017-10-27 copulas can go through head-comp.
+;;; DAI 2017-10-31 verbal postposed complements are non-focus
+head-2nd-comp-phrase := basic-head-2nd-comp-phrase & head-initial &
+  [ ;; NON-HEAD-DTR.SYNSEM.OPT -, not for mcb
+    ;; HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.COMP-FIRST -,
+    NON-HEAD-DTR.SYNSEM.LOCAL.CONT.HOOK.ICONS-KEY non-focus ].
+
+;;; DAI 2017-10-31 verbal preposed complements are focus-or-topic
+;;; DAI 2017-10-31 demanding an empty subj list. This reduces OVS parse ambiguity, even though it is a cludge
+;;; DAI 2017-11-01 making comps be cop-comp - or empty!
+;;; DAI 2017-11-19 AUX should not be able to use this.
+;;; DAI 2020-07-17 non-head-dtr should be slash-empty
+comp-head-phrase := basic-head-1st-comp-phrase & head-final &
+  [ NON-HEAD-DTR.SYNSEM [ LOCAL.CONT.HOOK.ICONS-KEY focus-or-topic, 
+                          NON-LOCAL.SLASH 0-dlist ],
+    HEAD-DTR.SYNSEM.LOCAL.CAT [ VAL.COMPS cclist,
+                                HEAD.AUX - ] ].
+;;; DAI 2017-09-29 removing SUBJ-TOPIC, OBJ-TOPIC
+;;; DAI 2017-10-31 restricting to COP-COMP - ('n'-copula can't go through this rule)
+;;; DAI 2017-11-01 removing the above, COMPS < > should be enough.
+;;; DAI 2020-08-28 This is depricated: adapting O'Hagan's analysis of VSO as basic -- see paper
+;;; DAI 2020-09-11 This is actually still necessary for embedded clauses unless I allow 2 items on the SLASH list -- don't want to implement that for now
+subj-head-phrase := decl-head-subj-phrase & head-final &
+  [ HEAD-DTR.SYNSEM [ LOCAL.CAT.VAL [ COMPS < >,
+									                    SPR   < > ]],
+  	NON-HEAD-DTR.SYNSEM [ LOCAL.CONT.HOOK [ ICONS-KEY focus-or-topic,
+                                            INDEX.COG-ST fam-or-more ] ] ].
+
+;;; DAI 2017-10-31 remove this??
+;;; DAI 2/27/14 this is a hack to get topicalized objects to work
+subj-head-topicobj-phrase := decl-head-subj-phrase & head-final &
+  [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS cons ].
+
+;;; DAI 2017-10-31 non-focus argument here
+;;; DAI 2017-10-27 changing to head.copula -, copulas should not go through head-subj.
+;;; DAI 2017-11-01 making comps be cop-comp - or empty!
+;;; DAI 2017-11-01 moving the above to comp-head, making this require comps < >
+;;; DAI 2017-11-19 should actually not constrain COMPS since VSO & VOS are needed
+;;; DAI 2020-08-28 this replaces subj-head
+head-subj-phrase := decl-head-subj-phrase & head-initial &
+[ NON-HEAD-DTR.SYNSEM.LOCAL.CONT.HOOK.ICONS-KEY non-focus ].
+
+; Bare NP phrase.  Consider modifying the PRED value of the quantifier relation
+; introduced to match the semantic effect of bare NPs in your language.
+
+bare-np-phrase := basic-bare-np-phrase &
+  [ C-CONT.RELS <! [ PRED "exist_q_rel" ] !> ].
+
+;;;;;;;;;;;;;;;;;;
+;;; Analytical Focus
+;;;;;;;;;;;;;;;;;;
+
+;;; DAI 2017-11-17
+;;; Unfortunately this appears to be necessary because head-comp adds non-focus to the
+;;;   non-head-daughter (and must), and focus nti adds focus to the non-head-daughter
+focus-verb-head-comp-phrase := basic-head-1st-comp-phrase & head-initial &
+  [ HEAD-DTR nti-focus-verb-lex,
+    NON-HEAD-DTR infl-lex-rule & [ INFLECTED infl-satisfied ] ].
+
+;;; DAI 2017-11-17
+;;; Selects for a verb, takes its complements and subject and adds +focus
+;;; Requiring subj to be contentful, to cut down on ambiguity of where subj-dropping goes
+nti-focus-verb-lex := basic-verb-lex & non-mod-lex-item & clausal-second-arg-trans-lex-item &
+  [ SYNSEM.LOCAL.CAT.VAL [ SUBJ < #subj > ,
+                           COMPS < #comps . #vcomps >,
+                           SPR  < >,
+                           SPEC < > ],
+    ARG-ST < #subj, #comps & [ OPT -,
+                               LOCAL [ CAT [ VAL [ SUBJ < #subj >,
+                                                   COMPS #vcomps,
+                                                   SPR < >,
+                                                   SPEC < > ],
+                                             HEAD verb ],
+                                       CONT.HOOK.ICONS-KEY focus ] ] >
+  ].
+
+;;; DAI 2017-11-17
+;;; TODO: I'm not happy with this analysis
+focus-noun-head-comp-phrase := basic-head-1st-comp-phrase & head-initial &
+  [ HEAD-DTR nti-focus-noun-lex ].
+
+
+;;; DAI 2017-11-17
+;;; Selects for a focused np
+nti-focus-noun-lex := basic-verb-lex & non-mod-lex-item & transitive-lex-item &
+  [ SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CAT.HEAD noun,
+                                             CONT.HOOK.ICONS-KEY focus ]],
+                                   [ OPT -,
+                                     LOCAL [ CAT [ HEAD verb,
+                                                   VAL [ SPR < >,
+                                                         SPEC < > ]]]], ... >,
+                           SPR  < >,
+                           SPEC < > ]
+  ].
+
+nti-focus-m-lex := nti-focus-noun-lex &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.GEND MASC ].
+
+nti-focus-nm-lex := nti-focus-noun-lex &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.GEND NON-MASC ].
+
+;; TODO: Is there a way to combine these special lexical entries for subj vs obj focus?
+nti-focus-subj-lex := nti-focus-noun-lex &
+  [ SYNSEM.LOCAL.CAT.VAL [ SUBJ < >,
+                           COMPS < #subj, [ LOCAL.CAT.VAL [ SUBJ < #subj >,
+                                                            COMPS < > ] ] > ] ].
+
+nti-focus-obj-lex := nti-focus-noun-lex &
+  [ SYNSEM.LOCAL.CAT.VAL [ SUBJ < #subj >,
+                           COMPS < #comp, [ LOCAL.CAT.VAL [ SUBJ < #subj >,
+                                                            COMPS < #comp . #rest > ] ] . #rest > ]].
+
+nti-focus-nm-subj-lex := nti-focus-subj-lex & nti-focus-nm-lex.
+
+nti-focus-m-subj-lex := nti-focus-subj-lex & nti-focus-m-lex.
+
+nti-focus-nm-obj-lex := nti-focus-obj-lex & nti-focus-nm-lex.
+
+nti-focus-m-obj-lex := nti-focus-obj-lex & nti-focus-m-lex.
+
+;;;;;;;;;;;;;;;;;;
+;;; Coordination
+;;;;;;;;;;;;;;;;;;
+
+;;; Coordination Strategy 1
+
+np1-top-coord-rule := basic-np-top-coord-rule & apoly-top-coord-rule &
+  [ SYNSEM.LOCAL [ COORD-STRAT "1",
+		   CONT.HOOK.ICONS-KEY #icons ],
+    LCOORD-DTR.SYNSEM.LOCAL.CONT.HOOK.ICONS-KEY #icons,
+    RCOORD-DTR.SYNSEM.LOCAL.CONT.HOOK.ICONS-KEY #icons ].
+
+np1-bottom-coord-rule := conj-first-bottom-coord-rule & np-bottom-coord-phrase &
+  [ SYNSEM.LOCAL [ COORD-STRAT "1",
+		   CONT.HOOK.ICONS-KEY #icons ],
+    NONCONJ-DTR.SYNSEM.LOCAL.CONT.HOOK.ICONS-KEY #icons ].
+
+;;; Coordination Strategy 2
+
+np2-top-coord-rule := basic-np-top-coord-rule & apoly-top-coord-rule &
+  [ SYNSEM.LOCAL [ COORD-STRAT "2",
+		   CONT.HOOK.ICONS-KEY #icons ],
+    LCOORD-DTR-SYNSEM.LOCAL.CONT.HOOK.ICONS-KEY #icons,
+    RCOORD-DTR.SYNSEM.LOCAL.CONT.HOOK.ICONS-KEY #icons ].
+
+np2-bottom-coord-rule := conj-first-bottom-coord-rule & np-bottom-coord-phrase &
+  [ SYNSEM.LOCAL [ COORD-STRAT "2",
+		   CONT.HOOK.ICONS-KEY #icons ],
+    NONCONJ-DTR.SYNSEM.LOCAL.CONT.HOOK.ICONS-KEY #icons ].
+
+;;; Coordination Strategy 2
+;;; DAI 3/5/14 constraining coord S to be same FORM
+
+s2-top-coord-rule := basic-s-top-coord-rule & apoly-top-coord-rule &
+  [ SYNSEM.LOCAL [ COORD-STRAT "2",
+		   CAT.HEAD.FORM #form ],
+    LCOORD-DTR.SYNSEM.LOCAL.CAT.HEAD.FORM #form,
+    RCOORD-DTR.SYNSEM.LOCAL.CAT.HEAD.FORM #form ].
+
+s2-bottom-coord-rule := conj-first-bottom-coord-rule & s-bottom-coord-phrase &
+  [ SYNSEM.LOCAL [ COORD-STRAT "2",
+		   CAT.HEAD.FORM #form ],
+    NONCONJ-DTR.SYNSEM.LOCAL.CAT.HEAD.FORM #form ].

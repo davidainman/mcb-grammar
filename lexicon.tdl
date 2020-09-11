@@ -1,0 +1,424 @@
+;;; -*- Mode: TDL; Coding: utf-8 -*-
+;;; Nouns
+
+naro := 1st-EXCL-IS-PRO-noun-lex &
+  [ STEM < "naro" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+naroegi := 1st-EXCL-IS-PRO-noun-lex &
+  [ STEM < "naroegi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+aro := 1st-INCL-IS-PRO-noun-lex &
+  [ STEM < "aro" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+aroegi := 1st-INCL-IS-PRO-noun-lex &
+  [ STEM < "aroegi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+viro := 2nd-SG-IS-PRO-noun-lex &
+  [ STEM < "viro" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+viroegi := 2nd-PL-IS-PRO-noun-lex &
+  [ STEM < "viroegi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+iriro := 3rd-M-SG-IS-PRO-noun-lex &
+  [ STEM < "iriro" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+iriroegi := 3rd-M-PL-IS-PRO-noun-lex &
+  [ STEM < "iriroegi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+iroro := 3rd-NM-SG-IS-PRO-noun-lex &
+  [ STEM < "iroro" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+iroroegi := 3rd-NM-PL-IS-PRO-noun-lex &
+  [ STEM < "iroroegi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+naketyo := 1st-FIRST-PRO-noun-lex &
+  [ STEM < "naketyo" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+biketyo := 2nd-FIRST-PRO-noun-lex &
+  [ STEM < "biketyo" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+iketyo := 3rd-M-FIRST-PRO-noun-lex &
+  [ STEM < "iketyo" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+oketyo := 3rd-NM-FIRST-PRO-noun-lex &
+  [ STEM < "oketyo" >,
+    SYNSEM.LKEYS.KEYREL.PRED "pron_rel" ].
+
+tovai := common-noun-m-noun-lex &
+  [ STEM < "tovai" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_other_n_rel" ].
+
+antarini := common-noun-m-noun-lex &
+  [ STEM < "antarini" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_man_n_rel" ].
+
+tomi := common-noun-m-noun-lex &
+  [ STEM < "tomi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_son_n_rel" ].
+
+shinto := common-noun-nm-anim-noun-lex &
+  [ STEM < "shinto" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_daughter_n_rel" ].
+
+antaroni := common-noun-nm-anim-noun-lex &
+  [ STEM < "antaroni" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_woman_n_rel" ].
+
+vatsa := common-noun-nm-anim-noun-lex &
+  [ STEM < "vatsa" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_body_n_rel" ].
+
+shima := common-noun-m-noun-lex &
+  [ STEM < "shima" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_fish_n_rel" ].
+
+keatsi := common-noun-m-noun-lex &
+  [ STEM < "keatsi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_river_monster_n_rel" ].
+
+surari := common-noun-m-noun-lex &
+  [ STEM < "surari" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_man_n_rel" ].
+
+pitotsi := common-noun-nm-inan-noun-lex &
+  [ STEM < "pitotsi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_boat_n_rel" ].
+
+oaku := common-noun-nm-inan-noun-lex &
+  [ STEM < "oaku" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_river_n_rel" ].
+
+pankotsi := common-noun-nm-inan-noun-lex &
+  [ STEM < "pankotsi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_house_n_rel" ].
+
+gagurontsi := common-noun-nm-inan-noun-lex &
+  [ STEM < "gagurontsi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_clothes_n_rel" ].
+
+kemari := common-noun-anim-noun-lex &
+  [ STEM < "kemari" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_tapir_n_rel" ].
+
+otsiti := common-noun-anim-noun-lex &
+  [ STEM < "otsiti" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_dog_n_rel" ].
+
+mishi := common-noun-anim-noun-lex &
+  [ STEM < "mishi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_cat_n_rel" ].
+
+impaneki := common-noun-nm-inan-noun-lex &
+  [ STEM < "impaneki" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_sand_n_rel" ].
+
+;; TODO: Remove these proper names!
+Barentin := proper-noun-m-noun-lex &
+  [ STEM < "Barentin" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_Barentin_n_rel" ].
+
+Bisarota := proper-noun-m-noun-lex &
+  [ STEM < "Bisarota" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_Bisarota_n_rel" ].
+
+Rerpin := proper-noun-m-noun-lex &
+  [ STEM < "Rerpin" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_Rerpin_n_rel" ].
+
+Rerisuha := proper-noun-nm-noun-lex &
+  [ STEM < "Rerisuha" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_Rerisuha_n_rel" ].
+
+Tara := proper-noun-m-noun-lex &
+  [ STEM < "Tara" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_Tara_n_rel" ].
+
+Yakonera := proper-noun-nm-noun-lex &
+  [ STEM < "Yakonera" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_Yakonera_n_rel" ].
+
+otsiko := common-noun-nm-inan-noun-lex &
+  [ STEM < "otsiko" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_pointed_thing_n_rel" ].
+
+tsitsi := common-noun-nm-inan-noun-lex &
+  [ STEM < "tsitsi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_fire_n_rel" ].
+
+sekatsi := common-noun-nm-inan-noun-lex &
+  [ STEM < "sekatsi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_food_n_rel" ].
+
+;;; Verbs
+
+a := i-intransitive-verb-verb-lex &
+  [ STEM < "a" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_go_v_rel" ].
+
+ogonke := i-intransitive-verb-verb-lex &
+  [ STEM < "ogonke" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_arrive_v_rel" ].
+
+mag := i-intransitive-verb-verb-lex &
+  [ STEM < "mag" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_sleep_v_rel" ].
+
+pok := i-intransitive-verb-verb-lex &
+  [ STEM < "pok" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_come_v_rel" ].
+
+kitsog := i-intransitive-verb-verb-lex &
+  [ STEM < "kitsog" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_knot.weave_v_rel" ].
+
+kant := a-intransitive-verb-verb-lex &
+  [ STEM < "kant" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_happen_v_rel" ].
+
+tag := i-transitive-verb-verb-lex &
+  [ STEM < "tag" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_burn_v_rel" ].
+
+ne := i-transitive-verb-verb-lex &
+  [ STEM < "ne" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_see_v_rel" ].
+
+ne2 := i-clausal-matching-prop-verb-lex &
+  [ STEM < "ne" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_see_v_rel" ].
+
+ogo := i-clausal-matching-verb-verb-lex &
+  [ STEM < "ogo" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_know_v_rel" ].
+
+sure := a-clausal-irrealis-verb-verb-lex &
+  [ STEM < "sure" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_think_v_rel" ].
+
+onpera := a-clausal-irrealis-verb-verb-lex &
+  [ STEM < "onpera" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_order_v_rel" ].
+
+pintsa := i-transitive-verb-verb-lex & 
+  [ STEM < "pintsa" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_want_to_go_with_v_rel" ].
+
+shine := a-transitive-verb-verb-lex &
+  [ STEM < "shine" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_be.happy.about_v_rel" ].
+
+kamoso := a-transitive-verb-verb-lex &
+  [ STEM < "kamoso" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_visit_v_rel" ].
+
+og := a-transitive-verb-verb-lex &
+  [ STEM < "og" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_eat_v_rel" ].
+
+nig := i-transitive-verb-verb-lex &
+  [ STEM < "nig" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_swallow_v_rel" ].
+
+kog := a-clausal-matching-verb-verb-lex &
+  [ STEM < "kog" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_want_v_rel" ].
+
+n := n-copula-verb-lex &
+  [ STEM < "n" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_cop_v_rel" ].
+
+n-neg := n-copula-verb-lex-neg &
+  [ STEM < "n" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_cop_v_rel" ].
+
+ashint := a-transitive-verb-verb-lex &
+  [ STEM < "ashint" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_own_v_rel" ].
+
+ok := i-transitive-verb-verb-lex &
+  [ STEM < "ok" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_throw_v_rel" ].
+
+ok2 := i-ditransitive-verb-lex &
+  [ STEM < "ok" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_throw_v_rel" ].
+
+ogatsi := i-transitive-verb-verb-lex &
+  [ STEM < "ogatsi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_hurt_v_rel" ].
+
+irag := i-intransitive-verb-verb-lex &
+  [ STEM < "irag" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_cry_v_rel" ].
+
+sak := i-transitive-verb-verb-lex &
+  [ STEM < "sak" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_burn.person_v_rel" ].
+
+p := i-ditransitive-verb-lex &
+  [ STEM < "p" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_give_v_rel" ].
+
+patimat := i-transitive-verb-verb-lex &
+  [ STEM < "patimat" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_chase_v_rel" ].
+
+;;; REM Added this verb
+
+kiraja := i-stative-verb-lex &
+  [ STEM < "kiraja" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_red_sv_rel" ].
+
+taseg := a-stative-verb-lex &
+  [ STEM < "taseg" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_hungry_sv_rel" ].
+
+;;; REM Nti copulas
+
+inti := nti-copula-verb-lex &
+  [ STEM < "inti" >,
+    ARG-ST.FIRST.LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+                                             GEND MASC ]].
+
+onti := nti-copula-verb-lex &
+  [ STEM < "onti" >,
+    ARG-ST.FIRST.LOCAL.CONT.HOOK.INDEX.PNG [ PERNUM 3rd,
+                                             GEND NON-MASC ]].
+
+nanti := nti-copula-verb-lex &
+  [ STEM < "nanti" >,
+    ARG-ST.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 1SG+1PL_excl+1DSTR ].
+
+vinti := nti-copula-verb-lex &
+  [ STEM < "vinti" >,
+    ARG-ST.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 2nd ].
+
+anti := nti-copula-verb-lex &
+  [ STEM < "anti" >,
+    ARG-ST.FIRST.LOCAL.CONT.HOOK.INDEX.PNG.PERNUM 1PL_incl ].
+
+;;; Adjectives
+;;; REM Added all these adjectives
+
+;; DAI in mcb is this a normal adjective, not necessarily animate?
+;; in mcb diccionario it's used for trees so assuming yes
+omarane := adjective-nonmasc-lex &
+  [ STEM < "omarane" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_big_a_rel" ].
+
+imarane := adjective-masc-lex &
+  [ STEM < "imarane" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_big_a_rel" ].
+
+;;; Adverbs
+;;; REM Added this adverb
+
+maika := adverb-lex &
+  [ STEM < "maika" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_now_a_rel" ].
+
+paita := adverb-lex &
+  [ STEM < "paita" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_later_a_rel" ].
+
+arisano := adverb-lex &
+  [ STEM < "arisano" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_indeed_a_rel" ].
+
+kogapage := adverb-lex &
+  [ STEM < "kogapage" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_without.reason_a_rel" ].
+
+inkaara := adverb-lex &
+  [ STEM < "inkaara" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_earlier_a_rel" ].
+
+shintsi := adverb-lex &
+  [ STEM < "shintsi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_quickly_a_rel" ].
+
+;;; Determiners
+
+yonta := speaker-addressee-prox-det-M-determiner-lex &
+  [ STEM < "yonta" >,
+    SYNSEM.LKEYS.ALTKEYREL.PRED hearer+dem_a_rel ].
+
+onta := speaker-adressee-prox-det-NM-determiner-lex &
+  [ STEM < "onta" >,
+    SYNSEM.LKEYS.ALTKEYREL.PRED hearer+dem_a_rel ].
+
+yoka := speaker-prox-det-M-determiner-lex &
+  [ STEM < "yoka" >,
+    SYNSEM.LKEYS.ALTKEYREL.PRED proximal+dem_a_rel ].
+
+oka := speaker-prox-det-NM-determiner-lex &
+  [ STEM < "oka" >,
+    SYNSEM.LKEYS.ALTKEYREL.PRED proximal+dem_a_rel ].
+
+yoga := speaker-dist-det-M-determiner-lex &
+  [ STEM < "yoga" >,
+    SYNSEM.LKEYS.ALTKEYREL.PRED distal+dem_a_rel ].
+
+oga := speaker-dist-det-NM-determiner-lex &
+  [ STEM < "oga" >,
+    SYNSEM.LKEYS.ALTKEYREL.PRED distal+dem_a_rel ].
+
+matsi := neg-adv-lex &
+  [ STEM < "matsi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "neg_rel" ].
+
+te := neg-notionally-realis-aux-lex &
+  [ STEM < "te" >,
+    SYNSEM.LKEYS.KEYREL.PRED "neg_rel" ].
+
+tera := neg-notionally-realis-aux-lex &
+  [ STEM < "tera" >,
+    SYNSEM.LKEYS.KEYREL.PRED "neg_rel" ].
+
+ga_neg := neg-notionally-irrealis-aux-lex &
+  [ STEM < "ga" >,
+    SYNSEM.LKEYS.KEYREL.PRED "neg_rel" ].
+
+gara := neg-notionally-irrealis-aux-lex &
+  [ STEM < "gara" >,
+    SYNSEM.LKEYS.KEYREL.PRED "neg_rel" ].
+
+intiri1 := conj-lex &
+  [ STEM < "intiri" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_and_coord_rel",
+    CFORM "1" ].
+
+ontiri2 := conj-lex &
+  [ STEM < "ontiri" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_and_coord_rel",
+    CFORM "2" ].
+
+;; focus
+
+onti_v_focus := nti-focus-verb-lex &
+  [ STEM < "onti" > ].
+                                             
+onti_subj_focus := nti-focus-nm-subj-lex &
+  [ STEM < "onti" > ].
+
+onti_obj_focus := nti-focus-nm-obj-lex &
+  [ STEM < "onti" > ].
+                                             
+inti_subj_focus := nti-focus-m-subj-lex &
+  [ STEM < "inti" > ].     
+                                          
+inti_obj_focus := nti-focus-m-obj-lex &
+  [ STEM < "inti" > ].

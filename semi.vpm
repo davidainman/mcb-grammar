@@ -1,0 +1,86 @@
+;;; -*- Mode: TDL; Coding: utf-8 -*-
+; A basic VPM for Matrix grammars.
+event          <> e
+ref-ind        <> x
+individual     <> i
+handle         <> h
+non_event      <> p
+*              >> u
+semarg         << u
+
+SORT : SORT
+  * <> *
+  semsort << *
+
+SF : SF
+  prop <> prop
+  prop-or-ques >> prop-or-ques
+  prop << prop-or-ques
+  comm <> comm
+  prop-or-ques << ques
+
+COG-ST : COG-ST
+  type-id <> type-id
+  uniq-id <> uniq-id
+  familiar <> familiar
+  activated <> activated
+  in-foc <> in-foc
+  activ+fam <> activ+fam
+  uniq+fam <> uniq+fam
+  activ-or-more <> activ-or-more
+  uniq-or-less <> uniq-or-less
+  uniq+fam+act <> uniq+fam+act
+  fam-or-more <> fam-or-more
+  fam-or-less <> fam-or-less
+  uniq-or-more <> uniq-or-more
+  activ-or-less <> activ-or-less
+
+
+PNG.PERNUM : PNG.PER PNG.NUM
+  1SG <> first SG
+  2SG <> second SG
+  3SG <> third SG
+  1PL <> first PL
+  2PL <> second PL
+  3PL <> third PL
+  1DSTR <> first DSTR
+  2DSTR <> second DSTR
+  3DSTR <> third DSTR
+  1st >> first !
+  1SG << first !
+  2nd >> second !
+  2SG << second !
+  3rd >> third !
+  3SG << third !
+  SG <> ! SG
+  SG << * SG
+  PL <> ! PL
+  PL << * PL
+  DSTR <> ! DSTR
+  DSTR << * DSTR
+  ! >> ! !
+  SG << [x] [x]
+
+PNG.NUM : PNG.NUM
+  SG << *
+
+
+PNG.GEND : PNG.GEND
+  MASC <> MASC
+  NM-ANIMATE <> NM-ANIMATE
+  NM-NON-ANIMATE <> NM-NON-ANIMATE
+  NON-MASC <> NON-MASC
+  * <> !
+
+E.MOOD : MOOD
+  Realis <> Realis
+  Irrealis <> Irrealis
+  * <> !
+
+E.ASPECT : ASPECT
+  perfective <> perfective
+  imperfective <> imperfective
+  * <> !
+
+E.ASPECT      E.MOOD : E.TENSE
+imperfective  mood <> present

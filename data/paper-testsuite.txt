@@ -1,0 +1,168 @@
+Language: Matsigenka
+Language code: mcb
+Lines: translit translit-seg gloss translat
+Author: David Inman
+Date: October 9, 2017
+Source a: Matsigenka corpus, from Michael, O'Hagan, et al
+
+# Category
+
+#1 external coreference, paper ex 1
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: pi
+Yogari itovaire onperaigakaro oshintoegi okajaiguterira oaku
+yoga=ri i-tovai-re o-onpera-ig-ak-a=ro o-shinto-egi o-ok-ja-ig-u-e=ri=ra oaku
+3mS.dem.med=cntr 3mP-other.pro-alien.poss 3fS-order.about-pl-perf-realis.a=3fO 3fP-daughter-pl 3fS-throw-cl:fluid-pl-ret-irrealis=3mO=sub river
+'The others, she ordered her daughters to throw them into the river.'
+
+#2 external coreference, paper ex 2
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: pi
+Maika naro nokogake nonkamantakotakerira ikematsaigirira ontiri yovetsikageigirira matsigenka
+maika naro no-kog-ak-i no-n-kamant-ako-ak-i=ri=ra i-kematsa-ig-i=rira o-ntiri i-ovetsik-ge-ig-i=rira matsigenka
+now 1.pro 1S-want-perf-realis 1S-irrealis-tell-appl:indr-perf-irrealis=3mO=sub 3mS-believe.in-pl-realis=rel 3fS-coord 3mS-make-distr-pl-realis=rel person
+'Now, I want to tell what they believe in and what they make, the Matsigenka.'
+
+#3 dropped subject, paper ex 8
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: pi
+Pogaigari shima?
+pi-og-ig-a=ri shima
+2S-eat-PL-realis.a=3mO fish
+'Do you eat fish?'
+
+#4 focused question, paper ex 14a
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: is
+inaa, tyaniratyo kanika?
+ina tya-ni=ratyo kanika
+mother who.interr-anim=realz sound
+'Mom, who is making that sound?'
+
+#5 focused answer, paper ex 14b
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: is
+inti otomiegi Yakonera
+inti o-tomi-egi Yakonera
+3mS.COP 3fP-son-pl yakonera
+'It is the sons of Yakonera.'
+
+#6 coindexed pronoun, paper ex 15
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: is
+Yogari ani nokanakeri ipatimatanakera osheto , kantankicha irinpokaerokari.
+yoga=ri ani n-ok-an-ak-i=ri i-patima-an-ak-i=ra osheto  kantankicha iri-n-pok-a-e=rokari
+3mS.dem.med=cntr brother.in.law.1sg 1S-leave-abl-perf-realis=3mO 3mS-pursue-abl-perf-realis=sub spider.monkey but 3mS.irr-irrealis-come-reg-irrealis=epist.mod
+'My brother-in-law, I left him pursuing a spider monkey, but he already has returned.'
+
+#7 coindexed pronoun, paper ex 17
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: is
+Yogari Kinteroni irirotari shintakarorira shigekari.
+yoga=ri Kinteroni iriro=tari shint-ak-a=ro=rira shigek-a-ri
+3mS.dem.med=cntr name 3m.pro=pressup be.master.of-perf-realis.a=3fO=rel shake-realis.a-nmlz.alien
+'Kinteroni is the master and reason for earthquakes.'
+
+#8 coindexed pronoun, paper ex 19
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: is
+Irirorika niankitsine chonpite tsitetyamani , inti pokaigankitsine itsipaigarira.
+iriro=rika ni-ankits-i=ne chonpite tsitetyamani inti pok-ig-ankits-i=ne i-tsipa-ig-a=rira
+3m.pro=indef.temp speak-subj.foc1-irrealis=irreal.subj.foc bird.species small.hours.of.the.morning  3mS.cop come-pl-subj.foc1-irrealis=irreal.subj.foc 3mS-accompany-pl-realis.refl=rel
+'If the azulejo speaks, one's countrymen will return.'
+
+#9 0-copula, paper ex 21
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: is
+Irirori ineiri irirori shintori ovashi ipatimatanakeri
+iriro=ri i-ne-i=ri iriro=ri shintori ovashi i-patima-an-ak-i=ri
+3m.pro=cntr 3mS-see-realis=3mO 3m.pro=cntr collared.peccary so 3mS-pursue-abl-perf-realis=3mO 
+'He thought that they were collared peccaries, so he pursued them.'
+
+#10 SVO, paper ex 10
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: wo
+Yogari keatsi inigakeri Tara.
+yoga=ri keatsi i-nig-ak-i=ri Tara
+3mS.dem.med=cntr river.monster 3mS-swallow-perf-realis=3mO name
+'The river-monster swallowed Tara.'
+
+#11 OVS, paper ex 11
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: wo
+Ogari oshi tiroti asapetonkiigiro tsinaneigi agaigirora ashi pishimerontsi.
+oga=ri o-shi tiroti o-asape-tonki-ig-i=ro tsinane-igi o-ag-ig-i=ro=ra o-ashi pishimero-ntsi
+3fS.dem.med=cntr o.dummy-leaf palm.species 3fS-remove.peripheral.matter-NI:bone-pl-realis=3fO female-pl 3fS-get-pl-realis=3fO=sub 3fP-poss.pro broom-alien
+'The tiroti leaves the women scrape clean to make brooms.'
+
+#12 VSO, paper ex 12
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: wo
+tainakario , mataka ogakaro matsontsori pirento.
+taina=kario  mataka o-og-ak-a=ro matsontsori pirento
+come=help already 3fS-eat-perf-realis.a=3fO jaguar sister
+'Come help quickly, a jaguar is already eating my sister.'
+
+#13 VOS, paper ex 13 (latter half only)
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: wo
+aikiro yogantaigaririra pitomi pakitsa.
+aikiro i-og-ant-ig-a=ri=rira pi-tomi pakitsa
+also 3mS-eat-appl:instr-pl-realis.a=3mO=rel 2P-son eagle
+'Also an eagle will eat your children.'
+
+#14 paper ex 31
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: pi
+Ogari ivatsa yogavisaigavakero kamatitya.
+oga=ri i-vatsa i-og-avis-ig-av-ak-i=ro kamatitya
+3fS.dem.med=cntr 3mP-body 3mS-caus.agentive-pass.by-pl-trns-perf-realis=3fO downriver
+'His body, they made it go downriver.'
+
+#15 coindexed pronoun, removed from paper
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: is
+Yogari iketyorira yovetsikake tasorintsi matsigenka ipaitaigakeri Kinteroni ontiri Pareni
+yoga=ri i-ketyo=rira i-ovetsik-ak-i tasorintsi matsigenka i-pait-ig-ak-i=ri Kinteroni o-ntiri Pareni.
+3mS.dem.med=cntr 3mS-first=rel 3mS-make-perf-realis god person 3mS-name-pl-perf-realis=3mO name 3fS-coord name.
+'The first people God made he named Kinteroni and Pareni.'
+
+#16 coindexed pronoun, removed from paper
+Source: a
+Vetted: t
+Judgment: g
+Phenomena: is
+Ovashi irirori isuretanaka kmanakero ijina matsontsori ijinantakenparora.
+ovashi iriro=ri i-sure-an-ak-a iriro=rika m-an-ak-i=ro i-jina matsontsori i-jinant-ak-enpa=ro=ra
+so 3m.pro=cntr 3mS-think-abl-perf-realis.a 3m.pro=indef.temp bring-abl-perf-realis=3fO 3mP-wife jaguar 3mS-take.as.wife-perf-irreal.a=3fO=sub
+'Then he thought perhaps the jaguar brought his wife to take her as his own wife.'
